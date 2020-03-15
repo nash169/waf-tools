@@ -129,5 +129,5 @@ def check_lib(ctx, use_name, folder, lib_names, paths, required=[]):
         ctx.end_msg(err, "YELLOW")
 
 
-def check_config():
+def check_config(ctx, use_name, folder, config_names, paths, required=[]):
     pass

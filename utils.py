@@ -127,3 +127,7 @@ def check_lib(ctx, use_name, folder, lib_names, paths, required=[]):
             ctx.fatal(err)
         # If not don't stop
         ctx.end_msg(err, "YELLOW")
+
+
+def check_config():
+    pass

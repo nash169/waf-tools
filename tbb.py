@@ -23,7 +23,7 @@ def check_tbb(ctx):
     check_include(ctx, "TBB", "tbb", ["parallel_for.h"], path_check)
 
     # TBB libs
-    check_lib(ctx, "TBB", "", ["libtbb"], path_check)
+    check_lib(ctx, "TBB", "gcc4.8", ["libtbb"], path_check)
 
     # Add TBB
     if ctx.env.LIB_TBB:

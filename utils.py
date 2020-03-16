@@ -84,14 +84,13 @@ def check_lib(ctx, use_name, folder, lib_names, paths, required=[]):
     # Generate lib paths
     lib_paths = []
     for path in paths:
-        lib_paths.append(osp.join(path, "lib"))
-        lib_paths.append(osp.join(path, "lib/x86_64-linux-gnu"))
-        lib_paths.append(osp.join(path, "lib/intel64"))
-        lib_paths.append(osp.join(path, "lib/intel64/gcc4.7"))
         if folder:
             lib_paths.append(osp.join(path, "lib", folder))
             lib_paths.append(osp.join(path, "lib/x86_64-linux-gnu", folder))
             lib_paths.append(osp.join(path, "lib/intel64", folder))
+        lib_paths.append(osp.join(path, "lib"))
+        lib_paths.append(osp.join(path, "lib/x86_64-linux-gnu"))
+        lib_paths.append(osp.join(path, "lib/intel64"))
 
     try:
         # Search component/plugin

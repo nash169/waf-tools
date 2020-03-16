@@ -15,7 +15,7 @@ def options(opt):
 def check_tbb(ctx):
     # Set the search path
     if ctx.options.tbb_path is None:
-        path_check = ["/usr/local", "/usr", "/opt/intel", "/opt/intel/tbb"]
+        path_check = ["/opt/intel", "/opt/intel/tbb", "/usr/local", "/usr"]
     else:
         path_check = [ctx.options.tbb_path]
 
@@ -27,11 +27,7 @@ def check_tbb(ctx):
 
     # Add TBB
     if ctx.env.LIB_TBB:
-        if not ctx.get_env()["libs"]:
-            ctx.get_env()["libs"] = "TBB "
-        else:
-            ctx.get_env()["libs"] = ctx.get_env()["libs"] + "TBB "
-
+        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["TBB"]
         ctx.env.DEFINES_TBB = ["USE_TBB"]
 
 

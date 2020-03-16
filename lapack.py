@@ -24,10 +24,7 @@ def check_lapack(ctx):
 
     # Add LAPACK
     if ctx.env.LIB_LAPACK:
-        if not ctx.get_env()["libs"]:
-            ctx.get_env()["libs"] = "LAPACK "
-        else:
-            ctx.get_env()["libs"] = ctx.get_env()["libs"] + "LAPACK "
+        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["LAPACK"]
 
 
 def configure(cfg):

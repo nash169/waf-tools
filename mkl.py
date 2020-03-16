@@ -19,6 +19,8 @@ def options(opt):
         dest="mkl_threading",
     )
 
+    opt.add_option("--mkl-openmp", type="string", help="openmp type", dest="mkl_openmp")
+
     opt.load("tbb", tooldir="waf_tools")
 
 
@@ -26,7 +28,7 @@ def options(opt):
 def check_mkl(ctx):
     # Set the search path
     if ctx.options.mkl_path is None:
-        path_check = ["/usr/local", "/usr", "/opt/intel", "/opt/intel/mkl"]
+        path_check = ["/opt/intel", "/opt/intel/mkl", "/usr/local", "/usr"]
     else:
         path_check = [ctx.options.mkl_path]
 
@@ -35,65 +37,80 @@ def check_mkl(ctx):
 
     # MKL libs
     if ctx.options.mkl_threading is None or ctx.options.mkl_threading == "sequential":
-        check_lib(
-            ctx,
-            "MKL",
-            "",
-            ["libmkl_intel_ilp64", "libmkl_sequential", "libmkl_core"],
-            path_check,
-        )
-        # It would be necessary to check for the presence of pthread, m and dl
-        if ctx.env.LIB_MKL:
-            ctx.env.LIB_MKL = ctx.env.LIB_MKL + ["pthread", "m", "dl"]
+        if ctx.env.CXXNAME in ["icc", "icpc"]:
+            check_lib(ctx, "MKL", "", ["libpthread", "libm", "libdl"], path_check)
+            ctx.env.CXXFLAGS_MKL = ["-mkl=sequential"]
+        else:
+            check_lib(
+                ctx,
+                "MKL",
+                "",
+                [
+                    "libmkl_intel_ilp64",
+                    "libmkl_sequential",
+                    "libmkl_core",
+                    "libpthread",
+                    "libm",
+                    "libdl",
+                ],
+                path_check,
+            )
+            ctx.env.CXXFLAGS_MKL = ["-m64"]
+            ctx.env.LINKFLAGS_MKL = ["-Wl,--no-as-needed"]
     elif ctx.options.mkl_threading == "openmp":
-        check_lib(
-            ctx,
-            "MKL",
-            "",
-            [
-                "libmkl_intel_ilp64",
-                "libmkl_intel_thread",
-                "libmkl_core",
-            ],
-            path_check,
-        )
-        # Here it would be necessary to check for the presence of OPENMP and the others above
-        ctx.env.LIB_MKL = ctx.env.LIB_MKL + \
-            ["iomp5" if ctx.env.CXXNAME in ["icc", "icpc"] else "gomp"]
-        # It would be necessary to check for the presence of pthread, m and dl
-        if ctx.env.LIB_MKL:
-            ctx.env.LIB_MKL = ctx.env.LIB_MKL + ["pthread", "m", "dl"]
+        if ctx.env.CXXNAME in ["icc", "icpc"]:
+            check_lib(
+                ctx, "MKL", "", ["libiomp5", "libpthread", "libm", "libdl"], path_check
+            )
+            ctx.env.CXXFLAGS_MKL = ["-mkl=parallel"]
+        else:
+            lib_openmp = "iomp5" if ctx.options.mkl_openmp == "intel" else "gomp"
+
+            check_lib(
+                ctx,
+                "MKL",
+                "",
+                [
+                    "libmkl_intel_ilp64",
+                    "libmkl_gnu_thread"
+                    if lib_openmp == "gomp"
+                    else "libmkl_intel_thread",
+                    "libmkl_core",
+                    "lib" + lib_openmp,
+                    "libpthread",
+                    "libm",
+                    "libdl",
+                ],
+                path_check,
+            )
+            ctx.env.CXXFLAGS_MKL = ["-m64"]
+            ctx.env.LINKFLAGS_MKL = ["-Wl,--no-as-needed"]
     elif ctx.options.mkl_threading == "tbb":
         ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["TBB"]
         ctx.load("tbb", tooldir="waf_tools")
-        check_lib(
-            ctx,
-            "MKL",
-            "",
-            ["libmkl_intel_ilp64", "libmkl_tbb_thread",
-                "libmkl_core"],
-            path_check,
-        )
-        # stdc++ has to be checked? Does it work on macOS?
-        if ctx.env.LIB_MKL:
-            ctx.env.LIB_MKL = ctx.env.LIB_MKL + \
-                ["stdc++", "pthread", "m", "dl"]
-    else:
-        pass
+
+        if ctx.env.CXXNAME in ["icc", "icpc"]:
+            check_lib(ctx, "MKL", "", ["libpthread", "libm", "libdl"], path_check)
+            ctx.env.CXXFLAGS_MKL = ["-mkl=parallel"]
+        else:
+            check_lib(
+                ctx,
+                "MKL",
+                "",
+                ["libmkl_intel_ilp64", "libmkl_tbb_thread", "libmkl_core"],
+                path_check,
+            )
+            ctx.env.CXXFLAGS_MKL = ["-m64"]
+            ctx.env.LINKFLAGS_MKL = ["-Wl,--no-as-needed"]
+
+        ctx.env.LIB_MKL = ["stdc++"] + ctx.env.LIB_MKL
 
     # Add MKL
     if ctx.env.LIB_MKL:
-        # MKL flags
-        if ctx.env.CXX_NAME in ["gcc", "g++"]:
-            ctx.env["CXXFLAGS"] = ctx.env["CXXFLAGS"] + \
-                ["-Wl,--no-as-needed", "-m64"]
         # MKL defines
         ctx.env.DEFINES_MKL = ["MKL_ILP64"]
-
-        if not ctx.get_env()["libs"]:
-            ctx.get_env()["libs"] = "MKL "
-        else:
-            ctx.get_env()["libs"] = ctx.get_env()["libs"] + "MKL "
+        # Add to used libraries
+        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["MKL"]
 
 
 def configure(cfg):

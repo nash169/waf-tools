@@ -22,13 +22,15 @@ def check_openmp(ctx):
                 linkflags=x,
                 uselib_store="OPENMP",
             )
-            ctx.env["CXXFLAGS"] = ctx.env["CXXFLAGS"] + ctx.env.LINKFLAGS_OPENMP
         except ctx.errors.ConfigurationError:
             pass
         else:
             break
     else:
         ctx.fatal("Could not find OpenMP")
+
+    if ctx.env.LINKFLAGS_OPENMP:
+        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["OPENMP"]
 
 
 def configure(cfg):

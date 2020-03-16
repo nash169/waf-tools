@@ -33,26 +33,30 @@ def check_include(ctx, use_name, folder, include_names, paths, required=[]):
             ctx.start_msg("Checking for '%s' header" % str(include_name))
             try:
                 # Add path
-                ctx.get_env()["INCLUDES_" + use_name] = ctx.get_env()["INCLUDES_" + use_name] + [
-                    get_directory(ctx, include_name, include_paths)
-                ]
+                ctx.get_env()["INCLUDES_" + use_name] = ctx.get_env()[
+                    "INCLUDES_" + use_name
+                ] + [get_directory(ctx, include_name, include_paths)]
                 # End header msg (found)
-                ctx.end_msg("'%s' header found in %s" %
-                            (include_name, ctx.get_env()["INCLUDES_" + use_name][-1]))
+                ctx.end_msg(
+                    "'%s' header found in %s"
+                    % (include_name, ctx.get_env()["INCLUDES_" + use_name][-1])
+                )
             except ctx.errors.ConfigurationError:
                 ctx.end_msg("'%s' header not found" % (include_name), "YELLOW")
                 if include_name in required:
                     raise ValueError(
-                        "%s includes not found - header '%s' required missing" % (use_name, include_name))
+                        "%s includes not found - header '%s' required missing"
+                        % (use_name, include_name)
+                    )
         # Remove duplicates
-        ctx.get_env()[
-            "INCLUDES_" + use_name] = list(set(ctx.get_env()["INCLUDES_" + use_name]))
+        ctx.get_env()["INCLUDES_" + use_name] = list(
+            set(ctx.get_env()["INCLUDES_" + use_name])
+        )
         # Start lib msg
         ctx.start_msg("Checking for %s includes" % str(use_name))
         # End include msg (found)
         ctx.end_msg(
-            "%s include found in %s"
-            % (use_name, ctx.get_env()["INCLUDES_" + use_name])
+            "%s include found in %s" % (use_name, ctx.get_env()["INCLUDES_" + use_name])
         )
     except ValueError as err:
         # Start lib msg
@@ -83,6 +87,7 @@ def check_lib(ctx, use_name, folder, lib_names, paths, required=[]):
         lib_paths.append(osp.join(path, "lib"))
         lib_paths.append(osp.join(path, "lib/x86_64-linux-gnu"))
         lib_paths.append(osp.join(path, "lib/intel64"))
+        lib_paths.append(osp.join(path, "lib/intel64/gcc4.7"))
         if folder:
             lib_paths.append(osp.join(path, "lib", folder))
             lib_paths.append(osp.join(path, "lib/x86_64-linux-gnu", folder))
@@ -92,33 +97,51 @@ def check_lib(ctx, use_name, folder, lib_names, paths, required=[]):
         # Search component/plugin
         for lib_name in lib_names:
             # Start component/plugin msg
-            ctx.start_msg("Checking for '%s' component/plugin" %
-                          str(lib_name[3:] if lib_name[:3] == 'lib' else lib_name))
+            ctx.start_msg(
+                "Checking for '%s' component/plugin"
+                % str(lib_name[3:] if lib_name[:3] == "lib" else lib_name)
+            )
             try:
                 # Add path
-                ctx.get_env()["LIBPATH_" + use_name] = ctx.get_env()["LIBPATH_" + use_name] + [
-                    get_directory(ctx, lib_name + "." + suffix, lib_paths)]
+                ctx.get_env()["LIBPATH_" + use_name] = ctx.get_env()[
+                    "LIBPATH_" + use_name
+                ] + [get_directory(ctx, lib_name + "." + suffix, lib_paths)]
                 # Add lib
                 ctx.get_env()["LIB_" + use_name] = ctx.get_env()["LIB_" + use_name] + [
-                    lib_name[3:] if lib_name[:3] == 'lib' else lib_name
+                    lib_name[3:] if lib_name[:3] == "lib" else lib_name
                 ]
                 # End lib msg (found)
-                ctx.end_msg("'%s' component/plugin found in %s" %
-                            (lib_name[3:] if lib_name[:3] == 'lib' else lib_name, ctx.get_env()["LIBPATH_" + use_name][-1]))
+                ctx.end_msg(
+                    "'%s' component/plugin found in %s"
+                    % (
+                        lib_name[3:] if lib_name[:3] == "lib" else lib_name,
+                        ctx.get_env()["LIBPATH_" + use_name][-1],
+                    )
+                )
             except ctx.errors.ConfigurationError:
-                ctx.end_msg("'%s' component/plugin not found" %
-                            (lib_name[3:] if lib_name[:3] == 'lib' else lib_name), "YELLOW")
+                ctx.end_msg(
+                    "'%s' component/plugin not found"
+                    % (lib_name[3:] if lib_name[:3] == "lib" else lib_name),
+                    "YELLOW",
+                )
                 if lib_name in required:
                     raise ValueError(
-                        "%s lib not found - component/plugin '%s' required missing" % (use_name, lib_name[3:] if lib_name[:3] == 'lib' else lib_name))
+                        "%s lib not found - component/plugin '%s' required missing"
+                        % (
+                            use_name,
+                            lib_name[3:] if lib_name[:3] == "lib" else lib_name,
+                        )
+                    )
         # Remove duplicates
-        ctx.get_env()[
-            "LIBPATH_" + use_name] = list(set(ctx.get_env()["LIBPATH_" + use_name]))
+        ctx.get_env()["LIBPATH_" + use_name] = list(
+            set(ctx.get_env()["LIBPATH_" + use_name])
+        )
         # Start lib msg
         ctx.start_msg("Checking for %s lib" % str(use_name))
         # End lib msg (found)
-        ctx.end_msg("%s lib found in %s" %
-                    (use_name, ctx.get_env()["LIBPATH_" + use_name]))
+        ctx.end_msg(
+            "%s lib found in %s" % (use_name, ctx.get_env()["LIBPATH_" + use_name])
+        )
     except ValueError as err:
         # Start lib msg
         ctx.start_msg("Checking for %s lib" % str(use_name))

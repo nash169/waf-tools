@@ -10,8 +10,9 @@ def options(opt):
     opt.load("eigen", tooldir="waf_tools")
 
     # Options
-    opt.add_option("--raisim-path", type="string",
-                   help="path to raisim", dest="raisim_path")
+    opt.add_option(
+        "--raisim-path", type="string", help="path to raisim", dest="raisim_path"
+    )
 
 
 @conf
@@ -35,10 +36,7 @@ def check_raisim(ctx):
         ctx.env.STLIB_RAISIM = ["IrrXML"]
         ctx.env.LIB_RAISIM = ctx.env.LIB_RAISIM + ["png", "raisimODE"]
 
-        if not ctx.get_env()["libs"]:
-            ctx.get_env()["libs"] = "RAISIM "
-        else:
-            ctx.get_env()["libs"] = ctx.get_env()["libs"] + "RAISIM "
+        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["RAISIM"]
 
 
 def configure(cfg):

@@ -7,12 +7,16 @@ from utils import check_include, check_lib
 
 def options(opt):
     # Add options
-    opt.add_option("--ogre-path", type="string",
-                   help="path to Ogre", dest="ogre_path")
-    opt.add_option("--ogre-components", type="string",
-                   help="Ogre components", dest="ogre_components")
-    opt.add_option("--ogre-plugins", type="string",
-                   help="Ogre plugins", dest="ogre_plugins")
+    opt.add_option("--ogre-path", type="string", help="path to Ogre", dest="ogre_path")
+    opt.add_option(
+        "--ogre-components",
+        type="string",
+        help="Ogre components",
+        dest="ogre_components",
+    )
+    opt.add_option(
+        "--ogre-plugins", type="string", help="Ogre plugins", dest="ogre_plugins"
+    )
 
 
 @conf
@@ -24,8 +28,17 @@ def check_ogre(ctx):
         path_check = [ctx.options.ogre_path]
 
     # Ogre components
-    components = ["Bites", "HLMS", "MeshLodGenerator", "Overlay",
-                  "Paging", "Property", "RTShaderSystem", "Terrain", "Volume"]
+    components = [
+        "Bites",
+        "HLMS",
+        "MeshLodGenerator",
+        "Overlay",
+        "Paging",
+        "Property",
+        "RTShaderSystem",
+        "Terrain",
+        "Volume",
+    ]
 
     if ctx.options.ogre_components is None:
         components = ["Bites", "Overlay", "RTShaderSystem", "MeshLodGenerator"]
@@ -33,11 +46,24 @@ def check_ogre(ctx):
         components = ctx.options.ogre_components
 
     for i, component in enumerate(components):
-        components[i] = 'libOgre' + component
+        components[i] = "libOgre" + component
 
     # Ogre plugins
-    plugins = ["Plugin_BSPSceneManager", "Plugin_CgProgramManager", "Plugin_OctreeSceneManager", "Plugin_PCZSceneManager", "Plugin_ParticleFX", "RenderSystem_GL",
-               "RenderSystem_GLES2", "RenderSystem_GL3Plus", "RenderSystem_Direct3D9", "RenderSystem_Direct3D11", "Codec_STBI", "Codec_FreeImage", "Codec_EXR"]
+    plugins = [
+        "Plugin_BSPSceneManager",
+        "Plugin_CgProgramManager",
+        "Plugin_OctreeSceneManager",
+        "Plugin_PCZSceneManager",
+        "Plugin_ParticleFX",
+        "RenderSystem_GL",
+        "RenderSystem_GLES2",
+        "RenderSystem_GL3Plus",
+        "RenderSystem_Direct3D9",
+        "RenderSystem_Direct3D11",
+        "Codec_STBI",
+        "Codec_FreeImage",
+        "Codec_EXR",
+    ]
 
     if ctx.options.ogre_plugins is None:
         plugins = []
@@ -53,13 +79,9 @@ def check_ogre(ctx):
 
     if ctx.env.LIB_OGRE:
         for component in components:
-            ctx.env.INCLUDES_OGRE.append(
-                ctx.env.INCLUDES_OGRE[0] + "/" + component)
+            ctx.env.INCLUDES_OGRE.append(ctx.env.INCLUDES_OGRE[0] + "/" + component)
 
-        if not ctx.get_env()["libs"]:
-            ctx.get_env()["libs"] = "OGRE "
-        else:
-            ctx.get_env()["libs"] = ctx.get_env()["libs"] + "OGRE "
+        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["OGRE"]
 
 
 def configure(cfg):

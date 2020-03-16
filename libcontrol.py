@@ -12,7 +12,10 @@ def options(opt):
 
     # Options
     opt.add_option(
-        "--libcontrol-path", type="string", help="path to libcontrol", dest="libcontrol_path"
+        "--libcontrol-path",
+        type="string",
+        help="path to libcontrol",
+        dest="libcontrol_path",
     )
 
 
@@ -25,22 +28,17 @@ def check_libcontrol(ctx):
         path_check = [ctx.options.libcontrol_path]
 
     # LIBCONTROL includes
-    check_include(ctx, "LIBCONTROL", "", [
-                  "libcontrol/ControlState.hpp"], path_check)
+    check_include(ctx, "LIBCONTROL", "", ["libcontrol/ControlState.hpp"], path_check)
 
     # LIBCONTROL libs
     check_lib(ctx, "LIBCONTROL", "", ["libControl"], path_check)
 
     if ctx.env.LIB_LIBCONTROL:
-        ctx.get_env()["requires"] = ctx.get_env()[
-            "requires"] + ["EIGEN", "CORRADE"]
+        ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["EIGEN", "CORRADE"]
         ctx.load("eigen", tooldir="waf_tools")
         ctx.load("corrade", tooldir="waf_tools")
 
-        if not ctx.get_env()["libs"]:
-            ctx.get_env()["libs"] = "LIBCONTROL "
-        else:
-            ctx.get_env()["libs"] = ctx.get_env()["libs"] + "LIBCONTROL "
+        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["LIBCONTROL"]
 
 
 def configure(cfg):

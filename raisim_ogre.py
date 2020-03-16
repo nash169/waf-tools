@@ -11,7 +11,10 @@ def options(opt):
     opt.load("ogre", tooldir="waf_tools")
 
     opt.add_option(
-        "--raisimogre-path", type="string", help="path to raisimOgre", dest="raisimogre_path"
+        "--raisimogre-path",
+        type="string",
+        help="path to raisimOgre",
+        dest="raisimogre_path",
     )
 
 
@@ -30,8 +33,7 @@ def check_raisim_ogre(ctx):
     check_lib(ctx, "RAISIMOGRE", "", ["libraisimOgre"], path_check)
 
     if ctx.env.LIB_RAISIMOGRE:
-        ctx.get_env()["requires"] = ctx.get_env()[
-            "requires"] + ["RAISIM", "OGRE"]
+        ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["RAISIM", "OGRE"]
 
         if ctx.options.raisimogre_path:
             ctx.options.ogre_path = ctx.options.raisimogre_path
@@ -48,8 +50,7 @@ def check_raisim_ogre(ctx):
         try:
             ctx.start_msg("Checking for RaisimOgre config files")
 
-            config_path = get_directory(
-                ctx, "raisimOgre/ogre/ogre.cfg", config_check)
+            config_path = get_directory(ctx, "raisimOgre/ogre/ogre.cfg", config_check)
 
             ctx.end_msg("RaisimOgre configs found in %s" % str(config_path))
 
@@ -58,8 +59,11 @@ def check_raisim_ogre(ctx):
                 "RAISIM_OGRE_RESOURCE_DIR=" + config_path + "/raisimOgre/rsc/",
             ]
         except:
-            ctx.end_msg("RaisimOgre configs not found in %s" %
-                        str(config_check), "YELLOW")
+            ctx.end_msg(
+                "RaisimOgre configs not found in %s" % str(config_check), "YELLOW"
+            )
+
+        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["RAISIMOGRE"]
 
 
 def configure(cfg):

@@ -23,10 +23,7 @@ def check_blas(ctx):
     check_lib(ctx, "BLAS", "", ["libblas"], path_check)
 
     if ctx.env.LIB_BLAS:
-        if not ctx.get_env()["libs"]:
-            ctx.get_env()["libs"] = "BLAS "
-        else:
-            ctx.get_env()["libs"] = ctx.get_env()["libs"] + "BLAS "
+        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["BLAS"]
 
 
 def configure(cfg):

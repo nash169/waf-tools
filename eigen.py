@@ -43,10 +43,7 @@ def check_eigen(ctx):
 
     # Add EIGEN
     if ctx.env.INCLUDES_EIGEN:
-        if not ctx.get_env()["libs"]:
-            ctx.get_env()["libs"] = "EIGEN "
-        else:
-            ctx.get_env()["libs"] = ctx.get_env()["libs"] + "EIGEN "
+        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["EIGEN"]
 
         if ctx.options.eigen_lapack:
             ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["LAPACK"]
@@ -61,8 +58,10 @@ def check_eigen(ctx):
         if ctx.options.eigen_mkl:
             ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["MKL"]
             ctx.load("mkl", tooldir="waf_tools")
-            ctx.env.DEFINES_EIGEN = ctx.env.DEFINES_EIGEN + \
-                ["EIGEN_USE_MKL_VML", "MKL_DIRECT_CALL"]
+            ctx.env.DEFINES_EIGEN = ctx.env.DEFINES_EIGEN + [
+                "EIGEN_USE_MKL_VML",
+                "MKL_DIRECT_CALL",
+            ]
 
         if ctx.options.eigen_openmp and ctx.options.eigen_mkl is None:
             ctx.load("openmp", tooldir="waf_tools")

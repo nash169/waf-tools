@@ -108,7 +108,7 @@ def check_mkl(ctx):
     # Add MKL
     if ctx.env.LIB_MKL:
         # MKL defines
-        ctx.env.DEFINES_MKL = ["MKL_ILP64"]
+        ctx.env.DEFINES_MKL = ["MKL_ILP64"]  # Eigen suggests "MKL_LP64"
         # Add to used libraries
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["MKL"]
 

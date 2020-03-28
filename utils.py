@@ -2,7 +2,6 @@
 # encoding: utf-8
 
 import os
-import os.path as osp
 
 
 def get_directory(ctx, filename, dirs):
@@ -25,8 +24,8 @@ def check_include(ctx, use_name, folder, include_names, paths, required=[]):
     include_paths = []
     for path in paths:
         if folder:
-            include_paths.append(osp.join(path, "include", folder))
-        include_paths.append(osp.join(path, "include"))
+            include_paths.append(os.path.join(path, "include", folder))
+        include_paths.append(os.path.join(path, "include"))
 
     try:
         for include_name in include_names:
@@ -85,12 +84,12 @@ def check_lib(ctx, use_name, folder, lib_names, paths, required=[]):
     lib_paths = []
     for path in paths:
         if folder:
-            lib_paths.append(osp.join(path, "lib", folder))
-            lib_paths.append(osp.join(path, "lib/x86_64-linux-gnu", folder))
-            lib_paths.append(osp.join(path, "lib/intel64", folder))
-        lib_paths.append(osp.join(path, "lib"))
-        lib_paths.append(osp.join(path, "lib/x86_64-linux-gnu"))
-        lib_paths.append(osp.join(path, "lib/intel64"))
+            lib_paths.append(os.path.join(path, "lib", folder))
+            lib_paths.append(os.path.join(path, "lib/x86_64-linux-gnu", folder))
+            lib_paths.append(os.path.join(path, "lib/intel64", folder))
+        lib_paths.append(os.path.join(path, "lib"))
+        lib_paths.append(os.path.join(path, "lib/x86_64-linux-gnu"))
+        lib_paths.append(os.path.join(path, "lib/intel64"))
 
     try:
         # Search component/plugin

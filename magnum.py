@@ -76,6 +76,7 @@ def check_magnum(ctx):
         "imageconverter",
         "info",
         "al-info",
+        "GL",
     ]
 
     # Component dependencies
@@ -174,6 +175,7 @@ def check_magnum(ctx):
             "MeshTools",
             "SceneGraph",
             "Trade",
+            "GL",
         ]
     else:
         components_to_check = ctx.options.magnum_components
@@ -184,7 +186,7 @@ def check_magnum(ctx):
 
     # Plugins to check
     if ctx.options.magnum_plugins is None:
-        plugins_to_check = ["AnySceneImporter", "AssimpImporter"]
+        plugins_to_check = []  # ["AnySceneImporter", "AssimpImporter"]
     else:
         plugins_to_check = ctx.options.magnum_plugins
 
@@ -239,6 +241,9 @@ def check_magnum(ctx):
     if ctx.env.LIB_MAGNUM:
         for component in components:
             ctx.env.INCLUDES_MAGNUM.append(ctx.env.INCLUDES_MAGNUM[0] + "/" + component)
+
+        # Check for SDL fix this
+        ctx.env.INCLUDES_MAGNUM.append("/usr/include/SDL2/")
 
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["MAGNUM"]
 

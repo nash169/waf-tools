@@ -67,7 +67,7 @@ def check_include(ctx, use_name, folders, include_names, paths, required=[]):
         ctx.end_msg(err, "YELLOW")
 
 
-def check_lib(ctx, use_name, folders, lib_names, paths, required=[]):
+def check_lib(ctx, use_name, folders, lib_names, paths, plugin=False, required=[]):
     # Check if lib required
     if use_name in ctx.get_env()["requires"]:
         mandatory = True
@@ -108,9 +108,10 @@ def check_lib(ctx, use_name, folders, lib_names, paths, required=[]):
                         "LIBPATH_" + use_name
                     ] + [get_directory(ctx, lib_name + "." + suffix, lib_paths)]
                     # Add shared lib
-                    ctx.get_env()["LIB_" + use_name] = ctx.get_env()[
-                        "LIB_" + use_name
-                    ] + [lib_name[3:] if lib_name[:3] == "lib" else lib_name]
+                    if not plugin:
+                        ctx.get_env()["LIB_" + use_name] = ctx.get_env()[
+                            "LIB_" + use_name
+                        ] + [lib_name[3:] if lib_name[:3] == "lib" else lib_name]
                     # End shared lib msg (found)
                     ctx.end_msg(
                         "'%s' component/plugin found in %s (shared)"

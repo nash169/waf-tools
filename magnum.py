@@ -8,6 +8,9 @@ from utils import check_include, check_lib
 
 
 def options(opt):
+    # Required package options
+    opt.load("corrade opengl egl sdl2", tooldir="waf_tools")
+
     # Add options
     opt.add_option(
         "--magnum-path", type="string", help="path to Magnum", dest="magnum_path"
@@ -37,46 +40,52 @@ def check_magnum(ctx):
     else:
         path_check = [ctx.options.magnum_path]
 
-    # Magnum components
-    components = [
-        "Audio",
-        "DebugTools",
-        "MeshTools",
-        "Primitives",
-        "SceneGraph",
-        "Shaders",
-        "Shapes",
-        "Text",
-        "TextureTools",
-        "Trade",
-        "GlfwApplication",
-        "GlutApplication",
-        "GlxApplication",
-        "Sdl2Application",
-        "XEglApplication",
-        "WindowlessCglApplication",
-        "WindowlessEglApplication",
-        "WindowlessGlxApplication",
-        "WindowlessIosApplication",
-        "WindowlessWglApplication",
-        "WindowlessWindowsEglApplication",
-        "CglContext",
-        "EglContext",
-        "GlxContext",
-        "WglContext",
-        "OpenGLTester",
-        "MagnumFont",
-        "MagnumFontConverter",
-        "ObjImporter",
-        "TgaImageConverter",
-        "TgaImporter",
-        "WavAudioImporter",
+    # Magnum binaries
+    binaries = [
         "distancefieldconverter",
         "fontconverter",
         "imageconverter",
         "info",
         "al-info",
+    ]
+
+    # Magnum configurations
+    configs = [
+        "BUILD_DEPRECATED",
+        "BUILD_STATIC",
+        "BUILD_MULTITHREADED",
+        "TARGET_GL",
+        "TARGET_GLES",
+        "TARGET_GLES2",
+        "TARGET_GLES3",
+        "TARGET_DESKTOP_GLES",
+        "TARGET_WEBGL",
+        "TARGET_HEADLESS",
+    ]
+
+    # Magnum components
+    components = [
+        "Audio",
+        "DebugTools",
+        "EglContext",
         "GL",
+        "GlfwApplication",
+        "GlxApplication",
+        "GlxContext",
+        "MeshTools",
+        "OpenDdl",
+        "OpenGLTester",
+        "Primitives",
+        "SceneGraph",
+        "Sdl2Application",
+        "Shaders",
+        "Text",
+        "TextureTools",
+        "Trade",
+        "Vk",
+        "WindowlessEglApplication",
+        "WindowlessGlxApplication",
+        "XEglApplication",
     ]
 
     # Component dependencies
@@ -103,29 +112,49 @@ def check_magnum(ctx):
     component_dependencies["WavAudioImporter"] = ["Audio"]
 
     # Magnum Plugins
-    plugins = [
+    plugins_audioimporters = [
         "AnyAudioImporter",
+        "DrFlacAudioImporter",
+        "DrMp3AudioImporter",
+        "DrWavAudioImporter",
+        "StbVorbisAudioImporter",
+        "WavAudioImporter",
+    ]
+
+    plugins_fonts = ["FreeTypeFont", "HarfBuzzFont", "MagnumFont", "StbTrueTypeFont"]
+
+    plugins_imageconverters = [
         "AnyImageConverter",
+        "JpegImageConverter",
+        "MiniExrImageConverter",
+        "PngImageConverter",
+        "StbImageConverter",
+        "TgaImageConverter",
+    ]
+
+    plugins_importers = [
         "AnyImageImporter",
         "AnySceneImporter",
         "AssimpImporter",
         "DdsImporter",
         "DevIlImageImporter",
-        "DrFlacAudioImporter",
-        "DrWavAudioImporter",
-        "FreeTypeFont",
-        "HarfBuzzFont",
         "JpegImporter",
-        "MiniExrImageConverter",
+        "ObjImporter",
         "OpenGexImporter",
-        "PngImageConverter",
         "PngImporter",
+        "PrimitiveImporter",
         "StanfordImporter",
-        "StbImageConverter",
         "StbImageImporter",
-        "StbTrueTypeFont",
-        "StbVorbisAudioImporter",
+        "TgaImporter",
+        "TinyGltfImporter",
     ]
+
+    plugins = (
+        plugins_audioimporters
+        + plugins_fonts
+        + plugins_imageconverters
+        + plugins_importers
+    )
 
     # Plugin dependencies
     plugin_dependencies = {}
@@ -186,7 +215,7 @@ def check_magnum(ctx):
 
     # Plugins to check
     if ctx.options.magnum_plugins is None:
-        plugins_to_check = []  # ["AnySceneImporter", "AssimpImporter"]
+        plugins_to_check = ["AnyImageImporter"]
     else:
         plugins_to_check = ctx.options.magnum_plugins
 
@@ -199,7 +228,7 @@ def check_magnum(ctx):
 
     # Integrations to check
     if ctx.options.magnum_plugins is None:
-        integrations_to_check = ["Bullet", "Dart"]
+        integrations_to_check = []
     else:
         integrations_to_check = ctx.options.magnum_integrations
 
@@ -224,26 +253,33 @@ def check_magnum(ctx):
         integrations_to_check[i] = "libMagnum" + integration + "Integration"
 
     # Check includes
-    check_include(ctx, "MAGNUM", ["Magnum"], ["Magnum.h"], path_check)
+    include_folders = ["Magnum"]
+    includes_to_check = ["Magnum.h"]
+    for plugin in plugins_to_check:
+        includes_to_check = includes_to_check + [plugin + ".h"]
+        include_folders = include_folders + ["MagnumPlugins/" + plugin]
+
+    check_include(ctx, "MAGNUM", include_folders, includes_to_check, path_check)
 
     # Check libraries
-    lib_to_check = (
-        ["libMagnum"] + components_to_check + plugins_to_check + integrations_to_check
-    )
-    folders_to_check = [
+    lib_to_check = ["libMagnum"] + components_to_check + integrations_to_check
+    lib_folders = [
         "magnum/audioimporters",
         "magnum/fonts",
         "magnum/imageconverters",
         "magnum/importers",
     ]
-    check_lib(ctx, "MAGNUM", folders_to_check, lib_to_check, path_check)
+    check_lib(ctx, "MAGNUM", lib_folders, lib_to_check, path_check)
+    check_lib(ctx, "MAGNUM", lib_folders, plugins_to_check, path_check, True)
 
     if ctx.env.LIB_MAGNUM:
-        for component in components:
-            ctx.env.INCLUDES_MAGNUM.append(ctx.env.INCLUDES_MAGNUM[0] + "/" + component)
+        ctx.load("corrade", tooldir="waf_tools")
 
-        # Check for SDL fix this
-        ctx.env.INCLUDES_MAGNUM.append("/usr/include/SDL2/")
+        if "libMagnumGL" in components_to_check:
+            ctx.load("opengl", tooldir="waf_tools")
+
+        if "libMagnumSdl2Application" in components_to_check:
+            ctx.load("egl sdl2", tooldir="waf_tools")
 
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["MAGNUM"]
 
@@ -251,3 +287,16 @@ def check_magnum(ctx):
 def configure(cfg):
     if not cfg.env.LIB_MAGNUM:
         cfg.check_magnum()
+
+
+# [
+#     "Shapes",
+#     "GlutApplication",
+#     "WindowlessCglApplication",
+#     "WindowlessIosApplication",
+#     "WindowlessWglApplication",
+#     "WindowlessWindowsEglApplication",
+#     "CglContext",
+#     "WglContext",
+#     "MagnumFontConverter"
+# ]

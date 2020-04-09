@@ -74,8 +74,9 @@ def check_ogre(ctx):
     check_include(ctx, "OGRE", ["OGRE"], ["Ogre.h"], path_check)
 
     # OGRE libs
-    lib_to_check = ["libOgreMain"] + components + plugins
+    lib_to_check = ["libOgreMain"] + components
     check_lib(ctx, "OGRE", ["OGRE"], lib_to_check, path_check)
+    check_lib(ctx, "OGRE", ["OGRE"], plugins, path_check, True)
 
     if ctx.env.LIB_OGRE:
         for component in components:

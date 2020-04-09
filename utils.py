@@ -9,7 +9,7 @@ def get_directory(ctx, filename, dirs):
     return res[: -len(filename) - 1]
 
 
-def check_include(ctx, use_name, folder, include_names, paths, required=[]):
+def check_include(ctx, use_name, folders, include_names, paths, required=[]):
     # Check if lib required
     if use_name in ctx.get_env()["requires"]:
         mandatory = True
@@ -23,8 +23,9 @@ def check_include(ctx, use_name, folder, include_names, paths, required=[]):
     # Generate include paths
     include_paths = []
     for path in paths:
-        if folder:
-            include_paths.append(os.path.join(path, "include", folder))
+        if folders:
+            for folder in folders:
+                include_paths.append(os.path.join(path, "include", folder))
         include_paths.append(os.path.join(path, "include"))
 
     try:
@@ -66,7 +67,7 @@ def check_include(ctx, use_name, folder, include_names, paths, required=[]):
         ctx.end_msg(err, "YELLOW")
 
 
-def check_lib(ctx, use_name, folder, lib_names, paths, required=[]):
+def check_lib(ctx, use_name, folders, lib_names, paths, required=[]):
     # Check if lib required
     if use_name in ctx.get_env()["requires"]:
         mandatory = True
@@ -83,10 +84,11 @@ def check_lib(ctx, use_name, folder, lib_names, paths, required=[]):
     # Generate lib paths
     lib_paths = []
     for path in paths:
-        if folder:
-            lib_paths.append(os.path.join(path, "lib", folder))
-            lib_paths.append(os.path.join(path, "lib/x86_64-linux-gnu", folder))
-            lib_paths.append(os.path.join(path, "lib/intel64", folder))
+        if folders:
+            for folder in folders:
+                lib_paths.append(os.path.join(path, "lib", folder))
+                lib_paths.append(os.path.join(path, "lib/x86_64-linux-gnu", folder))
+                lib_paths.append(os.path.join(path, "lib/intel64", folder))
         lib_paths.append(os.path.join(path, "lib"))
         lib_paths.append(os.path.join(path, "lib/x86_64-linux-gnu"))
         lib_paths.append(os.path.join(path, "lib/intel64"))
@@ -100,22 +102,40 @@ def check_lib(ctx, use_name, folder, lib_names, paths, required=[]):
                 % str(lib_name[3:] if lib_name[:3] == "lib" else lib_name)
             )
             try:
-                # Add path
-                ctx.get_env()["LIBPATH_" + use_name] = ctx.get_env()[
-                    "LIBPATH_" + use_name
-                ] + [get_directory(ctx, lib_name + "." + suffix, lib_paths)]
-                # Add lib
-                ctx.get_env()["LIB_" + use_name] = ctx.get_env()["LIB_" + use_name] + [
-                    lib_name[3:] if lib_name[:3] == "lib" else lib_name
-                ]
-                # End lib msg (found)
-                ctx.end_msg(
-                    "'%s' component/plugin found in %s"
-                    % (
-                        lib_name[3:] if lib_name[:3] == "lib" else lib_name,
-                        ctx.get_env()["LIBPATH_" + use_name][-1],
+                try:
+                    # Add shared path
+                    ctx.get_env()["LIBPATH_" + use_name] = ctx.get_env()[
+                        "LIBPATH_" + use_name
+                    ] + [get_directory(ctx, lib_name + "." + suffix, lib_paths)]
+                    # Add shared lib
+                    ctx.get_env()["LIB_" + use_name] = ctx.get_env()[
+                        "LIB_" + use_name
+                    ] + [lib_name[3:] if lib_name[:3] == "lib" else lib_name]
+                    # End shared lib msg (found)
+                    ctx.end_msg(
+                        "'%s' component/plugin found in %s (shared)"
+                        % (
+                            lib_name[3:] if lib_name[:3] == "lib" else lib_name,
+                            ctx.get_env()["LIBPATH_" + use_name][-1],
+                        )
                     )
-                )
+                except:
+                    # Add static path
+                    ctx.get_env()["STLIBPATH_" + use_name] = ctx.get_env()[
+                        "STLIBPATH_" + use_name
+                    ] + [get_directory(ctx, lib_name + ".a", lib_paths)]
+                    # Add static lib
+                    ctx.get_env()["STLIB_" + use_name] = ctx.get_env()[
+                        "STLIB_" + use_name
+                    ] + [lib_name[3:] if lib_name[:3] == "lib" else lib_name]
+                    # End static lib msg (found)
+                    ctx.end_msg(
+                        "'%s' component/plugin found in %s (static)"
+                        % (
+                            lib_name[3:] if lib_name[:3] == "lib" else lib_name,
+                            ctx.get_env()["STLIBPATH_" + use_name][-1],
+                        )
+                    )
             except ctx.errors.ConfigurationError:
                 ctx.end_msg(
                     "'%s' component/plugin not found"

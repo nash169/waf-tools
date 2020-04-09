@@ -39,7 +39,7 @@ def check_eigen(ctx):
         path_check = [ctx.options.eigen_path]
 
     # EIGEN includes
-    check_include(ctx, "EIGEN", "eigen3", ["Eigen/Core"], path_check)
+    check_include(ctx, "EIGEN", ["eigen3"], ["Eigen/Core"], path_check)
 
     # Add EIGEN
     if ctx.env.INCLUDES_EIGEN:

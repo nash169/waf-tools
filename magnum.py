@@ -279,7 +279,7 @@ def check_magnum(ctx):
             ctx.load("opengl", tooldir="waf_tools")
 
         if "libMagnumSdl2Application" in components_to_check:
-            ctx.load("egl sdl2", tooldir="waf_tools")
+            ctx.load("sdl2", tooldir="waf_tools")
 
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["MAGNUM"]
 

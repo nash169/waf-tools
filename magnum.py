@@ -9,7 +9,7 @@ from utils import check_include, check_lib
 
 def options(opt):
     # Required package options
-    opt.load("corrade opengl egl sdl2", tooldir="waf_tools")
+    opt.load("corrade eigen opengl egl sdl2", tooldir="waf_tools")
 
     # Add options
     opt.add_option(
@@ -197,17 +197,10 @@ def check_magnum(ctx):
 
     # Components to check
     if ctx.options.magnum_components is None:
-        components_to_check = [
-            "Sdl2Application",
-            "Shaders",
-            "Primitives",
-            "MeshTools",
-            "SceneGraph",
-            "Trade",
-            "GL",
-        ]
+        components_to_check = []
     else:
-        components_to_check = ctx.options.magnum_components
+        components_to_check = list(ctx.options.magnum_components.split(","))
+        print(components_to_check)
 
     # Add component dependencies
     for component in components_to_check:
@@ -215,9 +208,9 @@ def check_magnum(ctx):
 
     # Plugins to check
     if ctx.options.magnum_plugins is None:
-        plugins_to_check = ["AnyImageImporter"]
+        plugins_to_check = []
     else:
-        plugins_to_check = ctx.options.magnum_plugins
+        plugins_to_check = list(ctx.options.magnum_plugins.split(","))
 
     # Add plugin/component dependencies
     for plugin in plugins_to_check:
@@ -227,10 +220,10 @@ def check_magnum(ctx):
         )
 
     # Integrations to check
-    if ctx.options.magnum_plugins is None:
+    if ctx.options.magnum_integrations is None:
         integrations_to_check = []
     else:
-        integrations_to_check = ctx.options.magnum_integrations
+        integrations_to_check = list(ctx.options.magnum_integrations.split(","))
 
     # Add integration/component dependencies
     for integration in integrations_to_check:
@@ -244,7 +237,13 @@ def check_magnum(ctx):
     # Clean & add prefix
     components_to_check = list(set(components_to_check))
     plugins_to_check = list(set(plugins_to_check))
+
     integrations_to_check = list(set(integrations_to_check))
+    if "Eigen" in integrations_to_check:
+        integrations_to_check.remove("Eigen")
+        with_eigen = True
+    else:
+        with_eigen = False
 
     for i, component in enumerate(components_to_check):
         components_to_check[i] = "libMagnum" + component
@@ -273,6 +272,7 @@ def check_magnum(ctx):
     check_lib(ctx, "MAGNUM", lib_folders, plugins_to_check, path_check, True)
 
     if ctx.env.LIB_MAGNUM:
+        # Check external dependencies
         ctx.load("corrade", tooldir="waf_tools")
 
         if "libMagnumGL" in components_to_check:
@@ -280,6 +280,9 @@ def check_magnum(ctx):
 
         if "libMagnumSdl2Application" in components_to_check:
             ctx.load("sdl2", tooldir="waf_tools")
+
+        if with_eigen:
+            ctx.load("eigen", tooldir="waf_tools")
 
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["MAGNUM"]
 

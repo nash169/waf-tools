@@ -43,7 +43,7 @@ def check_ogre(ctx):
     if ctx.options.ogre_components is None:
         components = ["Bites", "Overlay", "RTShaderSystem", "MeshLodGenerator"]
     else:
-        components = ctx.options.ogre_components
+        components = list(ctx.options.ogre_components.split(","))
 
     for i, component in enumerate(components):
         components[i] = "libOgre" + component
@@ -68,7 +68,7 @@ def check_ogre(ctx):
     if ctx.options.ogre_plugins is None:
         plugins = []
     else:
-        plugins = ctx.options.ogre_plugins
+        plugins = list(ctx.options.ogre_plugins.split(","))
 
     # OGRE includes
     check_include(ctx, "OGRE", ["OGRE"], ["Ogre.h"], path_check)

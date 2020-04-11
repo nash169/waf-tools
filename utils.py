@@ -159,7 +159,12 @@ def check_lib(ctx, use_name, folders, lib_names, paths, plugin=False, required=[
         ctx.start_msg("Checking for %s lib" % str(use_name))
         # End lib msg (found)
         ctx.end_msg(
-            "%s lib found in %s" % (use_name, ctx.get_env()["LIBPATH_" + use_name])
+            "%s lib found in %s"
+            % (
+                use_name,
+                ctx.get_env()["LIBPATH_" + use_name]
+                + ctx.get_env()["STLIBPATH_" + use_name],
+            )
         )
     except ValueError as err:
         # Start lib msg

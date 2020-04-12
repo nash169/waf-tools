@@ -11,20 +11,20 @@ def options(opt):
 
     # Options
     opt.add_option(
-        "--magnum-dynamics-path",
+        "--magnum_dynamics-path",
         type="string",
         help="path to magnum-dynamics",
-        dest="magnum-dynamics_path",
+        dest="magnum_dynamics_path",
     )
 
 
 @conf
 def check_magnum_dynamics(ctx):
     # Set the search path
-    if ctx.options.dynamics_path is None:
+    if ctx.options.magnum_dynamics_path is None:
         path_check = ["/usr/local", "/usr"]
     else:
-        path_check = [ctx.options.dynamics_path]
+        path_check = [ctx.options.magnum_dynamics_path]
 
     # magnum-dynamics includes
     check_include(

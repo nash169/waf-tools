@@ -272,18 +272,23 @@ def check_magnum(ctx):
     check_lib(ctx, "MAGNUM", lib_folders, plugins_to_check, path_check, True)
 
     if ctx.env.LIB_MAGNUM:
-        # Check external dependencies
+        # Check dependencies
+        ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["CORRADE"]
         ctx.load("corrade", tooldir="waf_tools")
 
         if "libMagnumGL" in components_to_check:
+            ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["OPENGL"]
             ctx.load("opengl", tooldir="waf_tools")
 
         if "libMagnumSdl2Application" in components_to_check:
+            ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["SDL2"]
             ctx.load("sdl2", tooldir="waf_tools")
 
         if with_eigen:
+            ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["EIGEN"]
             ctx.load("eigen", tooldir="waf_tools")
 
+        # Add library
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["MAGNUM"]
 
 

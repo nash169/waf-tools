@@ -6,6 +6,9 @@ from utils import check_include, check_lib
 
 
 def options(opt):
+    # Required package options
+    opt.load("eigen corrade", tooldir="waf_tools")
+
     # Options
     opt.add_option(
         "--integrator-path",
@@ -32,6 +35,13 @@ def check_integrator(ctx):
     check_lib(ctx, "INTEGRATOR", "", ["libIntegrator"], path_check)
 
     if ctx.env.LIB_INTEGRATOR:
+        # Add dependencies to require libraries
+        ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["EIGEN", "CORRADE"]
+
+        # Check for dependencies
+        ctx.load("eigen corrade", tooldir="waf_tools")
+
+        # Add library
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["INTEGRATOR"]
 
 

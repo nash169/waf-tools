@@ -19,7 +19,8 @@ def options(opt):
         dest="mkl_threading",
     )
 
-    opt.add_option("--mkl-openmp", type="string", help="openmp type", dest="mkl_openmp")
+    opt.add_option("--mkl-openmp", type="string",
+                   help="openmp type", dest="mkl_openmp")
 
     opt.load("tbb", tooldir="waf_tools")
 
@@ -38,7 +39,8 @@ def check_mkl(ctx):
     # MKL libs
     if ctx.options.mkl_threading is None or ctx.options.mkl_threading == "sequential":
         if ctx.env.CXXNAME in ["icc", "icpc"]:
-            check_lib(ctx, "MKL", "", ["libpthread", "libm", "libdl"], path_check)
+            check_lib(ctx, "MKL", "", ["libpthread",
+                                       "libm", "libdl"], path_check)
             ctx.env.CXXFLAGS_MKL = ["-mkl=sequential"]
         else:
             check_lib(
@@ -60,7 +62,8 @@ def check_mkl(ctx):
     elif ctx.options.mkl_threading == "openmp":
         if ctx.env.CXXNAME in ["icc", "icpc"]:
             check_lib(
-                ctx, "MKL", "", ["libiomp5", "libpthread", "libm", "libdl"], path_check
+                ctx, "MKL", "", ["libiomp5", "libpthread",
+                                 "libm", "libdl"], path_check
             )
             ctx.env.CXXFLAGS_MKL = ["-mkl=parallel"]
         else:
@@ -90,7 +93,8 @@ def check_mkl(ctx):
         ctx.load("tbb", tooldir="waf_tools")
 
         if ctx.env.CXXNAME in ["icc", "icpc"]:
-            check_lib(ctx, "MKL", "", ["libpthread", "libm", "libdl"], path_check)
+            check_lib(ctx, "MKL", "", ["libpthread",
+                                       "libm", "libdl"], path_check)
             ctx.env.CXXFLAGS_MKL = ["-mkl=parallel"]
         else:
             check_lib(
@@ -101,7 +105,9 @@ def check_mkl(ctx):
                 path_check,
             )
             ctx.env.CXXFLAGS_MKL = ["-m64"]
-            ctx.env.LINKFLAGS_MKL = ["-Wl,--no-as-needed"]
+
+            if ctx.env["DEST_OS"] != "darwin":
+                ctx.env.LINKFLAGS_MKL = ["-Wl,--no-as-needed"]
 
         ctx.env.LIB_MKL = ["stdc++"] + ctx.env.LIB_MKL
 

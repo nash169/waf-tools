@@ -34,7 +34,7 @@ def check_magnum_dynamics(ctx):
     # magnum-dynamics libs
     check_lib(ctx, "MAGNUMDYNAMICS", "", ["libMagnumDynamics"], path_check)
 
-    if ctx.env.LIB_MAGNUMDYNAMICS:
+    if ctx.env.LIB_MAGNUMDYNAMICS or ctx.env.STLIB_MAGNUMDYNAMICS:
         # Add dependencies to require libraries
         ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["EIGEN", "MAGNUM"]
 
@@ -46,5 +46,5 @@ def check_magnum_dynamics(ctx):
 
 
 def configure(cfg):
-    if not cfg.env.LIB_MAGNUMDYNAMICS:
+    if not cfg.env.LIB_MAGNUMDYNAMICS and not cfg.env.STLIB_MAGNUMDYNAMICS:
         cfg.check_magnum_dynamics()

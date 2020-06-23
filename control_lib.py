@@ -31,7 +31,7 @@ def check_control(ctx):
     # control-lib libs
     check_lib(ctx, "CONTROL", "", ["libControl"], path_check)
 
-    if ctx.env.LIB_CONTROL:
+    if ctx.env.LIB_CONTROL or ctx.env.STLIB_CONTROL:
         # Add dependencies to require libraries
         ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["EIGEN", "CORRADE"]
 
@@ -43,5 +43,5 @@ def check_control(ctx):
 
 
 def configure(cfg):
-    if not cfg.env.LIB_CONTROL:
+    if not cfg.env.LIB_CONTROL and not cfg.env.STLIB_CONTROL:
         cfg.check_control()

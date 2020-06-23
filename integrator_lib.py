@@ -34,7 +34,7 @@ def check_integrator(ctx):
     # integrator-lib libs
     check_lib(ctx, "INTEGRATOR", "", ["libIntegrator"], path_check)
 
-    if ctx.env.LIB_INTEGRATOR:
+    if ctx.env.LIB_INTEGRATOR or ctx.env.STLIB_INTEGRATOR:
         # Add dependencies to require libraries
         ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["EIGEN", "CORRADE"]
 
@@ -46,5 +46,5 @@ def check_integrator(ctx):
 
 
 def configure(cfg):
-    if not cfg.env.LIB_INTEGRATOR:
+    if not cfg.env.LIB_INTEGRATOR and not cfg.env.STLIB_INTEGRATOR:
         cfg.check_integrator()

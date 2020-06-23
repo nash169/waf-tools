@@ -27,9 +27,7 @@ def check_integrator(ctx):
         path_check = [ctx.options.integrator_path]
 
     # integrator-lib includes
-    check_include(
-        ctx, "INTEGRATOR", ["integrator_lib"], ["AbstractIntegrator.hpp"], path_check
-    )
+    check_include(ctx, "INTEGRATOR", ["integrator_lib"], ["Integrate.hpp"], path_check)
 
     # integrator-lib libs
     check_lib(ctx, "INTEGRATOR", "", ["libIntegrator"], path_check)

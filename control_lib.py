@@ -24,9 +24,7 @@ def check_control(ctx):
         path_check = [ctx.options.control_path]
 
     # control-lib includes
-    check_include(
-        ctx, "CONTROL", ["control_lib"], ["AbstractController.hpp"], path_check
-    )
+    check_include(ctx, "CONTROL", ["control_lib"], ["Control.hpp"], path_check)
 
     # control-lib libs
     check_lib(ctx, "CONTROL", "", ["libControl"], path_check)

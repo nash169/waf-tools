@@ -39,7 +39,15 @@ def check_magnum_dynamics(ctx):
         ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["EIGEN", "MAGNUM"]
 
         # Check for dependencies
+        ctx.options.magnum_components = (
+            "Sdl2Application,Primitives,Shaders,MeshTools,SceneGraph,Trade,GL"
+        )
+        ctx.options.magnum_integrations = "Eigen"
+
         ctx.load("eigen magnum", tooldir="waf_tools")
+
+        # Add useful define to dynamically activate the graphics
+        ctx.env.DEFINES_MAGNUMDYNAMICS += ["GRAPHICS"]
 
         # Add library
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["MAGNUMDYNAMICS"]

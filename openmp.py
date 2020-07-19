@@ -5,7 +5,7 @@ from waflib.Configure import conf
 
 OPENMP_CODE = """
 #include <omp.h>
-int main () { return omp_get_num_threads (); }
+int main() { return omp_get_num_threads(); }
 """
 
 
@@ -19,6 +19,7 @@ def check_openmp(ctx):
             ctx.check(
                 msg="Checking for OpenMP flag %s" % x,
                 fragment=OPENMP_CODE,
+                cxxflags=x,
                 linkflags=x,
                 uselib_store="OPENMP",
             )

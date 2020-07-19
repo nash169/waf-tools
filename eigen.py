@@ -6,18 +6,22 @@ from utils import check_include
 
 
 def options(opt):
-    opt.add_option(
-        "--eigen-path", type="string", help="path to eigen", dest="eigen_path"
-    )
-    opt.add_option(
-        "--with-lapack", action="store_true", help="enable LAPACK", dest="eigen_lapack"
-    )
-    opt.add_option(
-        "--with-blas", action="store_true", help="enable OpenBLAS", dest="eigen_blas"
-    )
-    opt.add_option(
-        "--with-mkl", action="store_true", help="enable MKL", dest="eigen_mkl"
-    )
+    opt.add_option("--eigen-path",
+                   type="string",
+                   help="path to eigen",
+                   dest="eigen_path")
+    opt.add_option("--with-lapack",
+                   action="store_true",
+                   help="enable LAPACK",
+                   dest="eigen_lapack")
+    opt.add_option("--with-blas",
+                   action="store_true",
+                   help="enable OpenBLAS",
+                   dest="eigen_blas")
+    opt.add_option("--with-mkl",
+                   action="store_true",
+                   help="enable MKL",
+                   dest="eigen_mkl")
     opt.add_option(
         "--multi-threading",
         action="store_true",
@@ -48,12 +52,14 @@ def check_eigen(ctx):
         if ctx.options.eigen_lapack:
             ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["LAPACK"]
             ctx.load("lapack", tooldir="waf_tools")
-            ctx.env.DEFINES_EIGEN.append("EIGEN_USE_LAPACKE")
+            ctx.env.DEFINES_EIGEN = ctx.env.DEFINES_EIGEN + [
+                "EIGEN_USE_LAPACKE"
+            ]
 
         if ctx.options.eigen_blas:
             ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["BLAS"]
             ctx.load("blas", tooldir="waf_tools")
-            ctx.env.DEFINES_EIGEN.append("EIGEN_USE_BLAS")
+            ctx.env.DEFINES_EIGEN = ctx.env.DEFINES_EIGEN + ["EIGEN_USE_BLAS"]
 
         if ctx.options.eigen_mkl:
             ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["MKL"]
@@ -63,7 +69,7 @@ def check_eigen(ctx):
                 "MKL_DIRECT_CALL",
             ]
 
-        if ctx.options.eigen_openmp and ctx.options.eigen_mkl is None:
+        if ctx.options.eigen_openmp:
             ctx.load("openmp", tooldir="waf_tools")
 
 

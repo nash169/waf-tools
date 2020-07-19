@@ -37,12 +37,14 @@ def check_flags(ctx):
         opt_flags = ["-O3", "-march=native", "-g", "-faligned-new"]
     elif ctx.env.CXX_NAME in ["gcc", "g++"]:
         gcc_v = int(ctx.env["CC_VERSION"][0] + ctx.env["CC_VERSION"][1])
-        ctx.env["CXXFLAGS"].append("-std=c++14" if gcc_v >= 47 else "-std=c++0x")
+        ctx.env["CXXFLAGS"].append(
+            "-std=c++14" if gcc_v >= 47 else "-std=c++0x")
         opt_flags = [
             "-O3",
             "-march=native",
             "-g",
             ("-faligned-new" if gcc_v >= 47 else None),
+            # "-fopenmp",
         ]
 
     if ctx.options.optional_flags:

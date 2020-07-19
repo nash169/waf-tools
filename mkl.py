@@ -19,7 +19,10 @@ def options(opt):
         dest="mkl_threading",
     )
 
-    opt.add_option("--mkl-openmp", type="string", help="openmp type", dest="mkl_openmp")
+    opt.add_option("--mkl-openmp",
+                   type="string",
+                   help="openmp type",
+                   dest="mkl_openmp")
 
     opt.load("tbb", tooldir="waf_tools")
 
@@ -38,7 +41,8 @@ def check_mkl(ctx):
     # MKL libs
     if ctx.options.mkl_threading is None or ctx.options.mkl_threading == "sequential":
         if ctx.env.CXXNAME in ["icc", "icpc"]:
-            check_lib(ctx, "MKL", "", ["libpthread", "libm", "libdl"], path_check)
+            check_lib(ctx, "MKL", "", ["libpthread", "libm", "libdl"],
+                      path_check)
             ctx.env.CXXFLAGS_MKL = ["-mkl=sequential"]
         else:
             check_lib(
@@ -59,9 +63,8 @@ def check_mkl(ctx):
             ctx.env.LINKFLAGS_MKL = ["-Wl,--no-as-needed"]
     elif ctx.options.mkl_threading == "openmp":
         if ctx.env.CXXNAME in ["icc", "icpc"]:
-            check_lib(
-                ctx, "MKL", "", ["libiomp5", "libpthread", "libm", "libdl"], path_check
-            )
+            check_lib(ctx, "MKL", "",
+                      ["libiomp5", "libpthread", "libm", "libdl"], path_check)
             ctx.env.CXXFLAGS_MKL = ["-mkl=parallel"]
         else:
             lib_openmp = "iomp5" if ctx.options.mkl_openmp == "intel" else "gomp"
@@ -73,8 +76,7 @@ def check_mkl(ctx):
                 [
                     "libmkl_intel_ilp64",
                     "libmkl_gnu_thread"
-                    if lib_openmp == "gomp"
-                    else "libmkl_intel_thread",
+                    if lib_openmp == "gomp" else "libmkl_intel_thread",
                     "libmkl_core",
                     "lib" + lib_openmp,
                     "libpthread",
@@ -90,7 +92,8 @@ def check_mkl(ctx):
         ctx.load("tbb", tooldir="waf_tools")
 
         if ctx.env.CXXNAME in ["icc", "icpc"]:
-            check_lib(ctx, "MKL", "", ["libpthread", "libm", "libdl"], path_check)
+            check_lib(ctx, "MKL", "", ["libpthread", "libm", "libdl"],
+                      path_check)
             ctx.env.CXXFLAGS_MKL = ["-mkl=parallel"]
         else:
             check_lib(

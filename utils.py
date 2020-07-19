@@ -87,9 +87,11 @@ def check_lib(ctx, use_name, folders, lib_names, paths, plugin=False, required=[
         if folders:
             for folder in folders:
                 lib_paths.append(os.path.join(path, "lib", folder))
+                lib_paths.append(os.path.join(path, "lib64", folder))
                 lib_paths.append(os.path.join(path, "lib/x86_64-linux-gnu", folder))
                 lib_paths.append(os.path.join(path, "lib/intel64", folder))
         lib_paths.append(os.path.join(path, "lib"))
+        lib_paths.append(os.path.join(path, "lib64"))
         lib_paths.append(os.path.join(path, "lib/x86_64-linux-gnu"))
         lib_paths.append(os.path.join(path, "lib/intel64"))
 

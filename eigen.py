@@ -6,32 +6,29 @@ from utils import check_include
 
 
 def options(opt):
-    opt.add_option("--eigen-path",
-                   type="string",
-                   help="path to eigen",
-                   dest="eigen_path")
-    opt.add_option("--with-lapack",
-                   action="store_true",
-                   help="enable LAPACK",
-                   dest="eigen_lapack")
-    opt.add_option("--with-blas",
-                   action="store_true",
-                   help="enable OpenBLAS",
-                   dest="eigen_blas")
-    opt.add_option("--with-mkl",
-                   action="store_true",
-                   help="enable MKL",
-                   dest="eigen_mkl")
+    # Select installation path
     opt.add_option(
-        "--multi-threading",
-        action="store_true",
-        help="enable OpenMP",
-        dest="eigen_openmp",
+        "--eigen-path", type="string", help="path to eigen", dest="eigen_path"
+    )
+    # Activate LAPACK
+    opt.add_option(
+        "--with-lapack", action="store_true", help="enable LAPACK", dest="eigen_lapack"
+    )
+    # Activate BLAS
+    opt.add_option(
+        "--with-blas", action="store_true", help="enable OpenBLAS", dest="eigen_blas"
+    )
+    # Activate MKL
+    opt.add_option(
+        "--with-mkl", action="store_true", help="enable MKL", dest="eigen_mkl"
+    )
+    # Activate OPENMP
+    opt.add_option(
+        "--with-openmp", action="store_true", help="enable OpenMP", dest="eigen_openmp",
     )
 
-    opt.load("lapack", tooldir="waf_tools")
-    opt.load("blas", tooldir="waf_tools")
-    opt.load("mkl", tooldir="waf_tools")
+    # Load options
+    opt.load("lapack blas mkl", tooldir="waf_tools")
 
 
 @conf
@@ -45,22 +42,24 @@ def check_eigen(ctx):
     # EIGEN includes
     check_include(ctx, "EIGEN", ["eigen3"], ["Eigen/Core"], path_check)
 
-    # Add EIGEN
+    # If EIGEN headers found
     if ctx.env.INCLUDES_EIGEN:
+        # Add EIGEN label to the list of libraries
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["EIGEN"]
 
+        # Load LAPACK tool and add compiler DEFINES
         if ctx.options.eigen_lapack:
             ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["LAPACK"]
             ctx.load("lapack", tooldir="waf_tools")
-            ctx.env.DEFINES_EIGEN = ctx.env.DEFINES_EIGEN + [
-                "EIGEN_USE_LAPACKE"
-            ]
+            ctx.env.DEFINES_EIGEN = ctx.env.DEFINES_EIGEN + ["EIGEN_USE_LAPACKE"]
 
+        # Load BLAS tool and add compiler DEFINES
         if ctx.options.eigen_blas:
             ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["BLAS"]
             ctx.load("blas", tooldir="waf_tools")
             ctx.env.DEFINES_EIGEN = ctx.env.DEFINES_EIGEN + ["EIGEN_USE_BLAS"]
 
+        # Load MKL tool and add compiler DEFINES
         if ctx.options.eigen_mkl:
             ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["MKL"]
             ctx.load("mkl", tooldir="waf_tools")
@@ -69,6 +68,7 @@ def check_eigen(ctx):
                 "MKL_DIRECT_CALL",
             ]
 
+        # Load OPENMP tool
         if ctx.options.eigen_openmp:
             ctx.load("openmp", tooldir="waf_tools")
 

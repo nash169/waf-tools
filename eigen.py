@@ -10,21 +10,21 @@ def options(opt):
     opt.add_option(
         "--eigen-path", type="string", help="path to eigen", dest="eigen_path"
     )
+    # Activate OPENMP
+    opt.add_option(
+        "--eigen-openmp", action="store_true", help="enable OpenMP", dest="eigen_openmp",
+    )
     # Activate LAPACK
     opt.add_option(
-        "--with-lapack", action="store_true", help="enable LAPACK", dest="eigen_lapack"
+        "--eigen-lapack", action="store_true", help="enable LAPACK", dest="eigen_lapack"
     )
-    # Activate BLAS
+    # Activate (Open)BLAS
     opt.add_option(
-        "--with-blas", action="store_true", help="enable OpenBLAS", dest="eigen_blas"
+        "--eigen-blas", action="store_true", help="enable OpenBLAS", dest="eigen_blas"
     )
     # Activate MKL
     opt.add_option(
-        "--with-mkl", action="store_true", help="enable MKL", dest="eigen_mkl"
-    )
-    # Activate OPENMP
-    opt.add_option(
-        "--with-openmp", action="store_true", help="enable OpenMP", dest="eigen_openmp",
+        "--eigen-mkl", action="store_true", help="enable MKL", dest="eigen_mkl"
     )
 
     # Load options
@@ -46,6 +46,10 @@ def check_eigen(ctx):
     if ctx.env.INCLUDES_EIGEN:
         # Add EIGEN label to the list of libraries
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["EIGEN"]
+
+        # Load OPENMP tool
+        if ctx.options.eigen_openmp:
+            ctx.load("openmp", tooldir="waf_tools")
 
         # Load LAPACK tool and add compiler DEFINES
         if ctx.options.eigen_lapack:
@@ -87,10 +91,6 @@ def check_eigen(ctx):
                 "EIGEN_USE_MKL_VML",
                 "MKL_DIRECT_CALL",
             ]
-
-        # Load OPENMP tool
-        if ctx.options.eigen_openmp:
-            ctx.load("openmp", tooldir="waf_tools")
 
 
 def configure(cfg):

@@ -14,13 +14,14 @@ def check_openmp(ctx):
     """
     Detects openmp flags and sets the OPENMP ``FCFLAGS``/``LINKFLAGS``
     """
-    for x in ("-fopenmp", "-openmp", "-mp", "-xopenmp", "-omp", "-qsmp=omp"):
+    for x in ("-fopenmp", "-openmp", "-mp", "-xopenmp", "-omp", "-qsmp=omp", "-lomp"):
         try:
             ctx.check(
                 msg="Checking for OpenMP flag %s" % x,
                 fragment=OPENMP_CODE,
-                cxxflags=x,
+                # cxxflags=x,
                 linkflags=x,
+                use="omp",
                 uselib_store="OPENMP",
             )
         except ctx.errors.ConfigurationError:

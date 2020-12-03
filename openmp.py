@@ -19,7 +19,7 @@ def check_openmp(ctx):
             ctx.check(
                 msg="Checking for OpenMP flag %s" % x,
                 fragment=OPENMP_CODE,
-                # cxxflags=x,
+                cxxflags=x,
                 linkflags=x,
                 use="omp",
                 uselib_store="OPENMP",

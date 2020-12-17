@@ -25,7 +25,9 @@ def check_include(ctx, use_name, folders, include_names, paths, required=[]):
     for path in paths:
         if folders:
             for folder in folders:
+                include_paths.append(os.path.join(path, folder))
                 include_paths.append(os.path.join(path, "include", folder))
+        include_paths.append(path)
         include_paths.append(os.path.join(path, "include"))
 
     try:
@@ -56,7 +58,8 @@ def check_include(ctx, use_name, folders, include_names, paths, required=[]):
         ctx.start_msg("Checking for %s includes" % str(use_name))
         # End include msg (found)
         ctx.end_msg(
-            "%s include found in %s" % (use_name, ctx.get_env()["INCLUDES_" + use_name])
+            "%s include found in %s" % (use_name, ctx.get_env()[
+                                        "INCLUDES_" + use_name])
         )
     except ValueError as err:
         # Start lib msg
@@ -86,10 +89,13 @@ def check_lib(ctx, use_name, folders, lib_names, paths, plugin=False, required=[
     for path in paths:
         if folders:
             for folder in folders:
+                lib_paths.append(os.path.join(path, folder))
                 lib_paths.append(os.path.join(path, "lib", folder))
                 lib_paths.append(os.path.join(path, "lib64", folder))
-                lib_paths.append(os.path.join(path, "lib/x86_64-linux-gnu", folder))
+                lib_paths.append(os.path.join(
+                    path, "lib/x86_64-linux-gnu", folder))
                 lib_paths.append(os.path.join(path, "lib/intel64", folder))
+        lib_paths.append(path)
         lib_paths.append(os.path.join(path, "lib"))
         lib_paths.append(os.path.join(path, "lib64"))
         lib_paths.append(os.path.join(path, "lib/x86_64-linux-gnu"))

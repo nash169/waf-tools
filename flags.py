@@ -6,49 +6,44 @@ from waflib.Configure import conf
 
 def options(opt):
     opt.add_option(
-        "--debug-flags",
+        "--debug",
         action="store_true",
         help="activate debug flags",
         dest="debug_flags",
     )
     opt.add_option(
-        "--release-flags",
+        "--release",
         action="store_true",
         help="activate release flags",
         dest="release_flags",
-    )
-    opt.add_option(
-        "--optional-flags",
-        action="store_true",
-        help="activate optional flags",
-        dest="optional_flags",
     )
 
 
 @conf
 def check_flags(ctx):
-    ctx.env["CXXFLAGS"] = ["-Wall", "-w"]
+    # Set C++14 Standard
+    flags = ["-std=c++14"]
 
-    if ctx.env.CXX_NAME in ["icc", "icpc"]:
-        ctx.env["CXXFLAGS"].append("-std=c++14")
-        opt_flags = ["-O3", "-xHost", "-mtune=native", "-unroll", "-g"]
-    elif ctx.env.CXX_NAME in ["clang"]:
-        ctx.env["CXXFLAGS"].append("-std=c++14")
-        opt_flags = ["-O3", "-march=native", "-g", "-faligned-new"]
-    elif ctx.env.CXX_NAME in ["gcc", "g++"]:
-        gcc_v = int(ctx.env["CC_VERSION"][0] + ctx.env["CC_VERSION"][1])
-        ctx.env["CXXFLAGS"].append(
-            "-std=c++14" if gcc_v >= 47 else "-std=c++0x")
-        opt_flags = [
-            "-O3",
-            "-march=native",
-            "-g",
-            ("-faligned-new" if gcc_v >= 47 else None),
-            # "-fopenmp",
-        ]
+    if ctx.options.release_flags:
+        flags += ["-O3",
+                  "-xHost" if ctx.env.CXX_NAME in ["icc", "icpc"] else "",
+                  "-march=native" if ctx.env.CXX_NAME in [
+                      "gcc", "g++", "clang", "clang++"] else "",
+                  "-mtune=native" if ctx.env.CXX_NAME in [
+                      "icc", "icpc"] else "",
+                  "-g",
+                  "-faligned-new" if ctx.env.CXX_NAME in [
+                      "gcc", "g++", "clang", "clang++"] else "",
+                  "-unroll" if ctx.env.CXX_NAME in ["icc", "icpc"] else "",
+                  ]
+    else:
+        flags += ["-Wall", "-w"]
 
-    if ctx.options.optional_flags:
-        ctx.env["CXXFLAGS"] = ctx.env["CXXFLAGS"] + opt_flags
+    # Remove empty strings
+    flags = [string for string in flags if string != ""]
+
+    # Set compiler flags environment variable
+    ctx.env["CXXFLAGS"] += flags
 
 
 def configure(cfg):

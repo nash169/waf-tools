@@ -6,22 +6,18 @@ from utils import check_include, check_lib
 
 
 def options(opt):
+    # Options
     opt.add_option(
-        "--mkl-path",
-        type="string",
-        help="path to Intel Math Kernel Library",
-        dest="mkl_path",
+        "--mkl-path", type="string", help="path to Intel Math Kernel Library", dest="mkl_path",
     )
     opt.add_option(
-        "--mkl-threading",
-        type="string",
-        help="mkl threading layer",
-        dest="mkl_threading",
+        "--mkl-threading", type="string", help="mkl threading layer", dest="mkl_threading",
     )
 
-    opt.add_option("--mkl-openmp", type="string",
-                   help="openmp type", dest="mkl_openmp")
+    opt.add_option(
+        "--mkl-openmp", type="string", help="openmp type", dest="mkl_openmp")
 
+    # Required package options
     opt.load("tbb", tooldir="waf_tools")
 
 
@@ -89,8 +85,9 @@ def check_mkl(ctx):
             ctx.env.CXXFLAGS_MKL = ["-m64"]
             ctx.env.LINKFLAGS_MKL = ["-Wl,--no-as-needed"]
     elif ctx.options.mkl_threading == "tbb":
-        ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["TBB"]
-        ctx.load("tbb", tooldir="waf_tools")
+        if "TBB" not in ctx.get_env()["libs"]:
+            ctx.get_env()["requires"] += ["TBB"]
+            ctx.load("tbb", tooldir="waf_tools")
 
         if ctx.env.CXXNAME in ["icc", "icpc"]:
             check_lib(ctx, "MKL", "", ["libpthread",
@@ -116,7 +113,7 @@ def check_mkl(ctx):
         # MKL defines
         ctx.env.DEFINES_MKL = ["MKL_ILP64"]  # Eigen suggests "MKL_LP64"
         # Add to used libraries
-        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["MKL"]
+        ctx.get_env()["libs"] += ["MKL"]
 
 
 def configure(cfg):

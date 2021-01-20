@@ -29,7 +29,7 @@ def check_libcmaes(ctx):
     check_lib(ctx, "LIBCMAES", "", ["libcmaes"], path_check)
 
     if ctx.env.LIB_LIBCMAES:
-        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["LIBCMAES"]
+        ctx.get_env()["libs"] += ["LIBCMAES"]
 
 
 def configure(cfg):

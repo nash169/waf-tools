@@ -6,23 +6,24 @@ from waflib.Configure import conf
 
 def options(opt):
     opt.add_option(
-        "--debug",
-        action="store_true",
-        help="activate debug flags",
-        dest="debug_flags",
+        "--debug", action="store_true", help="activate debug flags", dest="debug_flags",
     )
+
     opt.add_option(
-        "--release",
-        action="store_true",
-        help="activate release flags",
-        dest="release_flags",
+        "--release", action="store_true", help="activate release flags", dest="release_flags",
+    )
+
+    opt.add_option(
+        "--standard", type="string", help="C++ Standard", dest="cpp_standard"
     )
 
 
 @conf
 def check_flags(ctx):
-    # Set C++14 Standard
-    flags = ["-std=c++14"]
+    if ctx.options.cpp_standard is not None:
+        flags = ["-std=c++"+ctx.options.cpp_standard]
+    else:
+        flags = ["-std=c++14"]  # Set C++14 Standard as default
 
     if ctx.options.release_flags:
         flags += ["-O3",

@@ -6,16 +6,13 @@ from utils import check_include, check_lib
 
 
 def options(opt):
-    # Required package options
-    opt.load("eigen corrade", tooldir="waf_tools")
-
     # Options
     opt.add_option(
-        "--integrator-path",
-        type="string",
-        help="path to integrator-lib",
-        dest="integrator_path",
+        "--integrator-path", type="string", help="path to integrator-lib", dest="integrator_path",
     )
+
+    # Required package options
+    opt.load("eigen corrade", tooldir="waf_tools")
 
 
 @conf
@@ -27,20 +24,24 @@ def check_integrator(ctx):
         path_check = [ctx.options.integrator_path]
 
     # integrator-lib includes
-    check_include(ctx, "INTEGRATOR", ["integrator_lib"], ["Integrate.hpp"], path_check)
+    check_include(ctx, "INTEGRATOR", ["integrator_lib"], [
+                  "Integrate.hpp"], path_check)
 
     # integrator-lib libs
     check_lib(ctx, "INTEGRATOR", "", ["libIntegrator"], path_check)
 
     if ctx.env.LIB_INTEGRATOR or ctx.env.STLIB_INTEGRATOR:
         # Add dependencies to require libraries
-        ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["EIGEN", "CORRADE"]
+        if "EIGEN" not in ctx.get_env()["libs"]:
+            ctx.get_env()["requires"] += ["EIGEN"]
+            ctx.load("eigen", tooldir="waf_tools")
 
-        # Check for dependencies
-        ctx.load("eigen corrade", tooldir="waf_tools")
+        if "CORRADE" not in ctx.get_env()["libs"]:
+            ctx.get_env()["requires"] += ["CORRADE"]
+            ctx.load("corrade", tooldir="waf_tools")
 
         # Add library
-        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["INTEGRATOR"]
+        ctx.get_env()["libs"] += ["INTEGRATOR"]
 
 
 def configure(cfg):

@@ -53,44 +53,42 @@ def check_eigen(ctx):
 
         # Load LAPACK tool and add compiler DEFINES
         if ctx.options.eigen_lapack:
-            # Add LAPACK to required libs
-            ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["LAPACK"]
+            if "LAPACK" not in ctx.get_env()["libs"]:
+                # Add LAPACK to required libs
+                ctx.get_env()["requires"] += ["LAPACK"]
 
-            # Request C lib LAPACK version
-            ctx.options.lapack_clib = True
+                # Request C lib LAPACK version
+                ctx.options.lapack_clib = True
 
-            # Load LAPACK
-            ctx.load("lapack", tooldir="waf_tools")
+                # Load LAPACK
+                ctx.load("lapack", tooldir="waf_tools")
 
             # Add EIGEN flags for LAPACK
-            ctx.env.DEFINES_EIGEN = ctx.env.DEFINES_EIGEN + \
-                ["EIGEN_USE_LAPACKE"]
+            ctx.env.DEFINES_EIGEN += ["EIGEN_USE_LAPACKE"]
 
         # Load (Open)BLAS tool and add compiler DEFINES
         if ctx.options.eigen_blas:
-            # Add OpenBLAS to required libs
-            ctx.get_env()["requires"] = ctx.get_env()[
-                "requires"] + ["OPENBLAS"]
+            if "OPENBLAS" not in ctx.get_env()["libs"]:
+                # Add OpenBLAS to required libs
+                ctx.get_env()["requires"] += ["OPENBLAS"]
 
-            # Load OpenBLAS
-            ctx.load("openblas", tooldir="waf_tools")
+                # Load OpenBLAS
+                ctx.load("openblas", tooldir="waf_tools")
 
             # Add EIGEN flags for OpenBLAS
-            ctx.env.DEFINES_EIGEN = ctx.env.DEFINES_EIGEN + ["EIGEN_USE_BLAS"]
+            ctx.env.DEFINES_EIGEN += ["EIGEN_USE_BLAS"]
 
         # Load MKL tool and add compiler DEFINES
         if ctx.options.eigen_mkl:
-            # Add MKL to required libs
-            ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["MKL"]
+            if "MKL" not in ctx.get_env()["libs"]:
+                # Add MKL to required libs
+                ctx.get_env()["requires"] += ["MKL"]
 
-            # Load MKL
-            ctx.load("mkl", tooldir="waf_tools")
+                # Load MKL
+                ctx.load("mkl", tooldir="waf_tools")
 
             # Add EIGEN flags for MKL
-            ctx.env.DEFINES_EIGEN = ctx.env.DEFINES_EIGEN + [
-                "EIGEN_USE_MKL_VML",
-                "MKL_DIRECT_CALL",
-            ]
+            ctx.env.DEFINES_EIGEN += ["EIGEN_USE_MKL_VML", "MKL_DIRECT_CALL"]
 
 
 def configure(cfg):

@@ -23,7 +23,7 @@ def check_flags(ctx):
     if ctx.options.cpp_standard is not None:
         flags = ["-std=c++"+ctx.options.cpp_standard]
     else:
-        flags = ["-std=c++14"]  # Set C++14 Standard as default
+        flags = ["-std=c++14", "-pthread"]  # Set C++14 Standard as default
 
     if ctx.options.release_flags:
         flags += ["-O3",

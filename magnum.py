@@ -102,7 +102,8 @@ def check_magnum(ctx):
         "Shaders",
     ]
     component_dependencies["Primitives"] = ["Trade"]
-    component_dependencies["MagnumFont"] = ["TgaImporter", "Text", "TextureTools"]
+    component_dependencies["MagnumFont"] = [
+        "TgaImporter", "Text", "TextureTools"]
     component_dependencies["MagnumFontConverter"] = [
         "TgaImageConverter",
         "Text",
@@ -121,7 +122,8 @@ def check_magnum(ctx):
         "WavAudioImporter",
     ]
 
-    plugins_fonts = ["FreeTypeFont", "HarfBuzzFont", "MagnumFont", "StbTrueTypeFont"]
+    plugins_fonts = ["FreeTypeFont", "HarfBuzzFont",
+                     "MagnumFont", "StbTrueTypeFont"]
 
     plugins_imageconverters = [
         "AnyImageConverter",
@@ -204,7 +206,8 @@ def check_magnum(ctx):
 
     # Add component dependencies
     for component in components_to_check:
-        components_to_check = components_to_check + component_dependencies[component]
+        components_to_check = components_to_check + \
+            component_dependencies[component]
 
     # Plugins to check
     if ctx.options.magnum_plugins is None:
@@ -223,7 +226,8 @@ def check_magnum(ctx):
     if ctx.options.magnum_integrations is None:
         integrations_to_check = []
     else:
-        integrations_to_check = list(ctx.options.magnum_integrations.split(","))
+        integrations_to_check = list(
+            ctx.options.magnum_integrations.split(","))
 
     # Add integration/component dependencies
     for integration in integrations_to_check:
@@ -231,7 +235,8 @@ def check_magnum(ctx):
             integrations_to_check + integration_dependencies[integration]
         )
         components_to_check = (
-            components_to_check + integration_components_dependencies[integration]
+            components_to_check +
+            integration_components_dependencies[integration]
         )
 
     # Clean & add prefix
@@ -258,7 +263,8 @@ def check_magnum(ctx):
         includes_to_check = includes_to_check + [plugin + ".h"]
         include_folders = include_folders + ["MagnumPlugins/" + plugin]
 
-    check_include(ctx, "MAGNUM", include_folders, includes_to_check, path_check)
+    check_include(ctx, "MAGNUM", include_folders,
+                  includes_to_check, path_check)
 
     # Check libraries
     lib_to_check = ["libMagnum"] + components_to_check + integrations_to_check

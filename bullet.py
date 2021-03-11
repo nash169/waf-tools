@@ -11,6 +11,13 @@ def options(opt):
         "--bullet-path", type="string", help="path to bullet", dest="bullet_path"
     )
 
+    opt.add_option(
+        "--bullet-components",
+        type="string",
+        help="Bullet components",
+        dest="bullet_components",
+    )
+
 
 @conf
 def check_bullet(ctx):
@@ -25,10 +32,19 @@ def check_bullet(ctx):
                   "btBulletDynamicsCommon.h"], path_check)
 
     # bullet-lib libs
-    libs_to_check = ["LinearMath", "Bullet3Common", "BulletInverseDynamics",
-                     "BulletCollision", "BulletDynamics", "BulletSoftBody"]
+    components = ["LinearMath", "Bullet3Common", "BulletInverseDynamics",
+                  "BulletCollision", "BulletDynamics", "BulletSoftBody"]
 
-    check_lib(ctx, "BULLET", "", libs_to_check, path_check)
+    # Components to check
+    if ctx.options.bullet_components is None:
+        components_to_check = []
+    else:
+        components_to_check = list(ctx.options.bullet_components.split(","))
+
+    for i, component in enumerate(components_to_check):
+        components_to_check[i] = "lib" + component
+
+    check_lib(ctx, "BULLET", "", components_to_check, path_check)
 
     if ctx.env.LIB_BULLET or ctx.env.STLIB_BULLET:
         # Add library

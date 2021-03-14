@@ -20,13 +20,17 @@ def check_opengl(ctx):
     else:
         path_check = [ctx.options.opengl_path]
 
-    # OpenGL includes
-    check_include(ctx, "OPENGL", ["GL"], ["gl.h"], path_check)
+    if ctx.env["DEST_OS"] == "darwin":
+        # OpenGL frameworks
+        ctx.get_env()["FRAMEWORK_OPENGL"] = ["Foundation", "OpenGL"]
+    else:
+        # OpenGL includes
+        check_include(ctx, "OPENGL", ["GL"], ["gl.h"], path_check)
 
-    # OpenGL libs
-    check_lib(ctx, "OPENGL", "", ["libGL"], path_check)
+        # OpenGL libs
+        check_lib(ctx, "OPENGL", "", ["libGL"], path_check)
 
-    if ctx.env.LIB_OPENGL:
+    if ctx.env.LIB_OPENGL or ctx.env.FRAMEWORK_OPENGL:
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["OPENGL"]
 
 

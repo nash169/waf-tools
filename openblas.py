@@ -33,7 +33,7 @@ def check_openblas(ctx):
         check_lib(ctx, "OPENBLAS", "", ["libopenblas"], path_check)
 
     if ctx.env.LIB_OPENBLAS:
-        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["OPENBLAS"]
+        ctx.get_env()["libs"] += ["OPENBLAS"]
 
 
 def configure(cfg):

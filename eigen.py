@@ -45,50 +45,50 @@ def check_eigen(ctx):
     # If EIGEN headers found
     if ctx.env.INCLUDES_EIGEN:
         # Add EIGEN label to the list of libraries
-        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["EIGEN"]
+        ctx.get_env()["libs"] += ["EIGEN"]
 
-        # Load OPENMP tool
-        if ctx.options.eigen_openmp:
-            ctx.load("openmp", tooldir="waf_tools")
+    # Load OPENMP tool
+    if ctx.options.eigen_openmp:
+        ctx.load("openmp", tooldir="waf_tools")
 
-        # Load LAPACK tool and add compiler DEFINES
-        if ctx.options.eigen_lapack:
-            if "LAPACK" not in ctx.get_env()["libs"]:
-                # Add LAPACK to required libs
-                ctx.get_env()["requires"] += ["LAPACK"]
+    # Load LAPACK C interface and add compiler DEFINES
+    if ctx.options.eigen_lapack and "EIGEN_USE_LAPACKE" not in ctx.env.DEFINES_EIGEN:
+        if "LAPACK" not in ctx.get_env()["libs"] and ctx.options.lapack_clib is None:
+            # Add LAPACK to required libs
+            ctx.get_env()["requires"] += ["LAPACK"]
 
-                # Request C lib LAPACK version
-                ctx.options.lapack_clib = True
+            # Request C lib LAPACK version
+            ctx.options.lapack_clib = True
 
-                # Load LAPACK
-                ctx.load("lapack", tooldir="waf_tools")
+            # Load LAPACK
+            ctx.load("lapack", tooldir="waf_tools")
 
-            # Add EIGEN flags for LAPACK
-            ctx.env.DEFINES_EIGEN += ["EIGEN_USE_LAPACKE"]
+        # Add EIGEN flags for LAPACK
+        ctx.env.DEFINES_EIGEN += ["EIGEN_USE_LAPACKE"]
 
-        # Load (Open)BLAS tool and add compiler DEFINES
-        if ctx.options.eigen_blas:
-            if "OPENBLAS" not in ctx.get_env()["libs"]:
-                # Add OpenBLAS to required libs
-                ctx.get_env()["requires"] += ["OPENBLAS"]
+    # Load (Open)BLAS and add compiler DEFINES
+    if ctx.options.eigen_blas and "EIGEN_USE_BLAS" not in ctx.env.DEFINES_EIGEN:
+        if "OPENBLAS" not in ctx.get_env()["libs"]:
+            # Add OpenBLAS to required libs
+            ctx.get_env()["requires"] += ["OPENBLAS"]
 
-                # Load OpenBLAS
-                ctx.load("openblas", tooldir="waf_tools")
+            # Load OpenBLAS
+            ctx.load("openblas", tooldir="waf_tools")
 
-            # Add EIGEN flags for OpenBLAS
-            ctx.env.DEFINES_EIGEN += ["EIGEN_USE_BLAS"]
+        # Add EIGEN flags for OpenBLAS
+        ctx.env.DEFINES_EIGEN += ["EIGEN_USE_BLAS"]
 
-        # Load MKL tool and add compiler DEFINES
-        if ctx.options.eigen_mkl:
-            if "MKL" not in ctx.get_env()["libs"]:
-                # Add MKL to required libs
-                ctx.get_env()["requires"] += ["MKL"]
+    # Load MKL tool and add compiler DEFINES
+    if ctx.options.eigen_mkl and "EIGEN_USE_MKL_VML" not in ctx.env.DEFINES_EIGEN:
+        if "MKL" not in ctx.get_env()["libs"]:
+            # Add MKL to required libs
+            ctx.get_env()["requires"] += ["MKL"]
 
-                # Load MKL
-                ctx.load("mkl", tooldir="waf_tools")
+            # Load MKL
+            ctx.load("mkl", tooldir="waf_tools")
 
-            # Add EIGEN flags for MKL
-            ctx.env.DEFINES_EIGEN += ["EIGEN_USE_MKL_VML", "MKL_DIRECT_CALL"]
+        # Add EIGEN flags for MKL
+        ctx.env.DEFINES_EIGEN += ["EIGEN_USE_MKL_VML", "MKL_DIRECT_CALL"]
 
 
 def configure(cfg):

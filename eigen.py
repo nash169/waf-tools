@@ -20,7 +20,7 @@ def options(opt):
     )
     # Activate (Open)BLAS
     opt.add_option(
-        "--eigen-blas", action="store_true", help="enable OpenBLAS", dest="eigen_blas"
+        "--eigen-blas", type="string", help="enable OpenBLAS (BLAS)", dest="eigen_blas"
     )
     # Activate MKL
     opt.add_option(
@@ -28,7 +28,7 @@ def options(opt):
     )
 
     # Load options
-    opt.load("lapack openblas mkl", tooldir="waf_tools")
+    opt.load("lapack blas openblas mkl", tooldir="waf_tools")
 
 
 @conf
@@ -67,13 +67,21 @@ def check_eigen(ctx):
         ctx.env.DEFINES_EIGEN += ["EIGEN_USE_LAPACKE"]
 
     # Load (Open)BLAS and add compiler DEFINES
-    if ctx.options.eigen_blas and "EIGEN_USE_BLAS" not in ctx.env.DEFINES_EIGEN:
-        if "OPENBLAS" not in ctx.get_env()["libs"]:
-            # Add OpenBLAS to required libs
-            ctx.get_env()["requires"] += ["OPENBLAS"]
+    if ctx.options.eigen_blas is not None and "EIGEN_USE_BLAS" not in ctx.env.DEFINES_EIGEN:
+        if ctx.options.eigen_blas == "blas":
+            if "OPENBLAS" not in ctx.get_env()["libs"]:
+                # Add OpenBLAS to required libs
+                ctx.get_env()["requires"] += ["OPENBLAS"]
 
-            # Load OpenBLAS
-            ctx.load("openblas", tooldir="waf_tools")
+                # Load OpenBLAS
+                ctx.load("openblas", tooldir="waf_tools")
+        else:
+            if "BLAS" not in ctx.get_env()["libs"]:
+                # Add BLAS to required libs
+                ctx.get_env()["requires"] += ["BLAS"]
+
+                # Load BLAS
+                ctx.load("blas", tooldir="waf_tools")
 
         # Add EIGEN flags for OpenBLAS
         ctx.env.DEFINES_EIGEN += ["EIGEN_USE_BLAS"]

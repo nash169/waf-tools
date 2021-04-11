@@ -13,7 +13,6 @@ def options(opt):
     opt.add_option(
         "--mkl-threading", type="string", help="mkl threading layer", dest="mkl_threading",
     )
-
     opt.add_option(
         "--mkl-openmp", type="string", help="openmp type", dest="mkl_openmp")
 

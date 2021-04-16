@@ -4,6 +4,8 @@
 from waflib.Configure import conf
 from utils import check_lib
 
+# Reference LAPACK implementation
+
 # For clarification about LAPACK/BLAS implementations check:
 # https://wiki.debian.org/DebianScience/LinearAlgebraLibraries
 

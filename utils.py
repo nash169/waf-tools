@@ -27,8 +27,11 @@ def check_include(ctx, use_name, folders, include_names, paths, required=[]):
             for folder in folders:
                 include_paths.append(os.path.join(path, folder))
                 include_paths.append(os.path.join(path, "include", folder))
+                include_paths.append(os.path.join(
+                    path, "include/x86_64-linux-gnu", folder))
         include_paths.append(path)
         include_paths.append(os.path.join(path, "include"))
+        include_paths.append(os.path.join(path, "include/x86_64-linux-gnu"))
 
     try:
         for include_name in include_names:

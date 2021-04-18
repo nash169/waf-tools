@@ -136,8 +136,25 @@ def check_mkl(ctx):
         # MKL defines
         if ctx.options.mkl_64:
             ctx.env.DEFINES_MKL = ["MKL_ILP64"]  # Eigen suggests "MKL_LP64"
+
         # Add to used libraries
         ctx.get_env()["libs"] += ["MKL"]
+
+        # Remove LAPACK if present (MKL has its own implementation)
+        if "LAPACK" in ctx.get_env()["libs"]:
+            ctx.get_env()["libs"].remove("LAPACK")
+            ctx.get_env()["requires"].remove("LAPACK")
+
+        # Remove BLAS and others if present (MKL has its own implementation)
+        if "BLAS" in ctx.get_env()["libs"]:
+            ctx.get_env()["libs"].remove("BLAS")
+            ctx.get_env()["requires"].remove("BLAS")
+        if "OPENBLAS" in ctx.get_env()["libs"]:
+            ctx.get_env()["libs"].remove("OPENBLAS")
+            ctx.get_env()["requires"].remove("OPENBLAS")
+        if "ATLAS" in ctx.get_env()["libs"]:
+            ctx.get_env()["libs"].remove("ATLAS")
+            ctx.get_env()["requires"].remove("ATLAS")
 
 
 def configure(cfg):

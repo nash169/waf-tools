@@ -52,7 +52,13 @@ def check_atlas(ctx):
     check_lib(ctx, "ATLAS", "", ["libatlas"], path_check)
 
     if ctx.env.LIB_ATLAS:
-        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["ATLAS"]
+        ctx.get_env()["libs"] += ["ATLAS"]
+
+        # Remove LAPACK if present (ATLAS has its own implementation)
+        # This should take place just when the complete atlas implementation is requested
+        if "LAPACK" in ctx.get_env()["libs"]:
+            ctx.get_env()["libs"].remove("LAPACK")
+            ctx.get_env()["requires"].remove("LAPACK")
 
 
 def configure(cfg):

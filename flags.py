@@ -29,8 +29,8 @@ def check_flags(ctx):
     if ctx.options.release_flags:
         flags += ["-O3",
                   "-xHost" if ctx.env.CXX_NAME in ["icc", "icpc"] else "",
-                  "-march=native" if ctx.env.CXX_NAME in [
-                      "gcc", "g++", "clang", "clang++"] else "",
+                  #   "-march=native" if ctx.env.CXX_NAME in [
+                  #       "gcc", "g++", "clang", "clang++"] else "",
                   "-mtune=native" if ctx.env.CXX_NAME in [
                       "icc", "icpc"] else "",
                   "-g",

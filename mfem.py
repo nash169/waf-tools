@@ -18,7 +18,8 @@ def options(opt):
     )
 
     # Load options
-    opt.load("openmp arpack", tooldir="waf_tools")
+    opt.load("mpi hypre metis openmp arpack petsc slepc eigen spectra lapack blas",
+             tooldir="waf_tools")
 
 
 @conf
@@ -31,23 +32,43 @@ def check_mfem(ctx):
 
     # Components
     options = [
+        "mpi",
+        "hypre",
+        "metis",
         "openmp",
         "arpack",
+        "petsc",
+        "slepc",
+        "eigen",
+        "spectra",
+        "lapack"
     ]
 
-    # Component dependencies
+    # Options dependencies
     option_dependencies = {}
     for option in options:
         option_dependencies[option] = []
 
-    option_dependencies["parpack"] = ["arpack"]
+    option_dependencies["mpi"] = ["hypre", "metis"]
+    option_dependencies["petsc"] = ["mpi"]
+    option_dependencies["slepc"] = ["petsc"]
+    option_dependencies["spectra"] = ["eigen"]
+    option_dependencies["lapack"] = ["blas"]
 
-    # Components to check
+    # Options to check
     if ctx.options.mfem_options is None:
         options_to_check = []
     else:
         options_to_check = list(ctx.options.mfem_options.split(","))
 
+    # Add dependencies options to check
+    dependencies_to_check = []
+    for option in options_to_check:
+        if option_dependencies[option] is not None and option_dependencies[option] not in dependencies_to_check and option_dependencies[option] not in options_to_check:
+            dependencies_to_check += option_dependencies[option]
+    options_to_check += dependencies_to_check
+
+    # Check option required
     for option in options_to_check:
         if option.upper() not in ctx.get_env()["libs"]:
             # Add option to required libs

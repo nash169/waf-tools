@@ -5,4 +5,4 @@ Repository containing all my WAF tools.
 Here is a list of improvements:
 - Adding CUDA support for eigen
 - Adding PGI compiler
-- boost, corrade, magnum tools still needs to be completed
+- boost, corrade, magnum tools need to be completed

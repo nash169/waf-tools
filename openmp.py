@@ -19,7 +19,7 @@ def check_openmp(ctx):
             ctx.check(
                 msg="Checking for OpenMP flag %s" % x,
                 fragment=OPENMP_CODE,
-                cxxflags=x,
+                cxxflags=["-Xpreprocessor", "-fopenmp"] if x == "-lomp" else x,
                 linkflags=x,
                 use="omp",
                 uselib_store="OPENMP",
@@ -30,6 +30,9 @@ def check_openmp(ctx):
             break
     else:
         ctx.fatal("Could not find OpenMP")
+
+    print(ctx.env.LINKFLAGS_OPENMP)
+    print(ctx.env.CXXFLAGS_OPENMP)
 
     if ctx.env.LINKFLAGS_OPENMP:
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["OPENMP"]

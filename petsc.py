@@ -24,6 +24,7 @@ def options(opt):
     # Load options
     opt.load("mpi", tooldir="waf_tools")
 
+
 @conf
 def check_petsc(ctx):
     # Set the search path
@@ -32,8 +33,11 @@ def check_petsc(ctx):
     else:
         path_check = os.path.join(ctx.options.petsc_path, "lib/pkgconfig")
 
+    ctx.check_cfg(package='PETSc', pkg_config_path=path_check,
+                  args=['--cflags', '--libs'], uselib_store='PETSC')
+
     compiler = ctx.check_cfg(package='PETSc', pkg_config_path=path_check,
-                  args='--variable=ccompiler --cflags --libs', uselib_store='PETSC')
+                             args=['--variable=ccompiler'], uselib_store='PETSC')
 
     if ctx.env.HAVE_PETSC and "PETSC" not in ctx.get_env()["libs"]:
         # Add MPI if PETSc has been compiled with it
@@ -41,6 +45,7 @@ def check_petsc(ctx):
             ctx.load("mpi", tooldir="waf_tools")
 
         ctx.get_env()["libs"] += ["PETSC"]
+
 
 def configure(cfg):
     if not cfg.env.LIB_PETSC:

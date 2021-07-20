@@ -22,6 +22,10 @@ def options(opt):
     opt.add_option(
         "--lapack-64", action="store_true", help="enable 64-bit indexing", dest="lapack_64"
     )
+    # no search (assuming system blas is present)
+    opt.add_option(
+        "--lapack-system", action="store_true", default=False, help="using system lapack", dest="lapack_system"
+    )
 
 
 @conf
@@ -32,17 +36,27 @@ def check_lapack(ctx):
     else:
         path_check = [ctx.options.lapack_path]
 
-    if ctx.options.lapack_64:
-        lib_to_check = ["liblapack64"]
-        if ctx.options.lapack_clib:
-            lib_to_check += ["liblapacke64"]
+    if ctx.options.lapack_system:
+        if ctx.options.lapack_64:
+            ctx.env.LIB_LAPACK = ["lapack64"]
+            if ctx.options.lapack_clib:
+                ctx.env.LIB_LAPACK += ["lapacke64"]
+        else:
+            ctx.env.LIB_LAPACK = ["lapack"]
+            if ctx.options.lapack_clib:
+                ctx.env.LIB_LAPACK += ["lapacke"]
     else:
-        lib_to_check = ["liblapack"]
-        if ctx.options.lapack_clib:
-            lib_to_check += ["liblapacke"]
+        if ctx.options.lapack_64:
+            lib_to_check = ["liblapack64"]
+            if ctx.options.lapack_clib:
+                lib_to_check += ["liblapacke64"]
+        else:
+            lib_to_check = ["liblapack"]
+            if ctx.options.lapack_clib:
+                lib_to_check += ["liblapacke"]
 
-    # Check LAPACK libs
-    check_lib(ctx, "LAPACK", "", lib_to_check, path_check)
+        # Check LAPACK libs
+        check_lib(ctx, "LAPACK", "", lib_to_check, path_check)
 
     # Add LAPACK
     if ctx.env.LIB_LAPACK:

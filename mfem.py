@@ -53,6 +53,7 @@ def check_mfem(ctx):
     option_dependencies["petsc"] = ["mpi"]
     option_dependencies["slepc"] = ["petsc"]
     option_dependencies["spectra"] = ["eigen"]
+    # add options to choose blas version
     option_dependencies["lapack"] = ["blas"]
 
     # Options to check

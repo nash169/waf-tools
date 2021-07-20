@@ -31,9 +31,6 @@ def check_openmp(ctx):
     else:
         ctx.fatal("Could not find OpenMP")
 
-    print(ctx.env.LINKFLAGS_OPENMP)
-    print(ctx.env.CXXFLAGS_OPENMP)
-
     if ctx.env.LINKFLAGS_OPENMP:
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["OPENMP"]
 

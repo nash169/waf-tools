@@ -2,11 +2,11 @@
 # encoding: utf-8
 
 # Tips for configuring PETSc
-# ./configure --with-cc=mpicc --with-cxx=mpicxx --with-fc=mpif90
-#             --with-debugging=0
-#             COPTFLAGS='-O3 -march=native -mtune=native' CXXOPTFLAGS='-O3 -march=native -mtune=native' FOPTFLAGS='-O3 -march=native -mtune=native'
-#             --with-openmp
-#             --with-scalar-type=complex
+# ./configure --with-cc=mpicc --with-cxx=mpicxx --with-fc=mpif90 \
+#             --with-debugging=0 \
+#             COPTFLAGS='-O3 -march=native -mtune=native' CXXOPTFLAGS='-O3 -march=native -mtune=native' FOPTFLAGS='-O3 -march=native -mtune=native' \
+#             --with-openmp \
+#             --with-scalar-type=complex \
 #             --with-PACKAGENAME-dir=PATH
 
 # To control the number of OpenMP threads each MPI process utilizes you can set the environmental variable OMP_NUM_THREADS n

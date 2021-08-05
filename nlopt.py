@@ -4,13 +4,10 @@
 from waflib.Configure import conf
 from utils import check_include, check_lib
 
-# For clarification about LAPACK/BLAS implementations check:
-# https://wiki.debian.org/DebianScience/LinearAlgebraLibraries
-
 
 def options(opt):
     opt.add_option(
-        "--nlopt-path", type="string", help="path to libCMAES", dest="nlopt_path"
+        "--nlopt-path", type="string", help="path to NLOPT", dest="nlopt_path"
     )
 
 
@@ -26,7 +23,8 @@ def check_nlopt(ctx):
     check_include(ctx, "NLOPT", "", ["nlopt.hpp"], path_check)
 
     # Library Check
-    check_lib(ctx, "NLOPT", "", ["libnlopt_cxx"], path_check)
+    check_lib(ctx, "NLOPT", "", ["libnlopt"], path_check)
+    # check_lib(ctx, "NLOPT", "", ["libnlopt_cxx"], path_check)
 
     if ctx.env.LIB_NLOPT:
         ctx.get_env()["libs"] += ["NLOPT"]

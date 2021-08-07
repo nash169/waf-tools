@@ -20,10 +20,10 @@ def check_hypre(ctx):
         path_check = [ctx.options.hypre_path]
 
     # HYPRE includes
-    check_include(ctx, "HYPRE", [""], ["HYPRE.h"], path_check)
+    check_include(ctx, "HYPRE", ["hypre"], ["HYPRE.h"], path_check)
 
     # HYPRE libs
-    check_lib(ctx, "HYPRE", "", ["libHYPRE"], path_check)
+    check_lib(ctx, "HYPRE", "", ["libHYPRE", "libHYPRE_core"], path_check)
 
     if ctx.env.LIB_HYPRE or ctx.env.STLIB_HYPRE:
         ctx.get_env()["libs"] += ["HYPRE"]

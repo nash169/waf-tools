@@ -18,7 +18,7 @@ def options(opt):
     )
 
     # Load options
-    opt.load("mpi hypre metis openmp arpack petsc slepc eigen spectra lapack blas",
+    opt.load("mpi hypre metis openmp arpack petsc slepc eigen spectra lapack blas suitesparse superlu",
              tooldir="waf_tools")
 
 
@@ -41,7 +41,9 @@ def check_mfem(ctx):
         "slepc",
         "eigen",
         "spectra",
-        "lapack"
+        "lapack",
+        "suitesparse",
+        "superlu"
     ]
 
     # Options dependencies
@@ -61,6 +63,9 @@ def check_mfem(ctx):
         options_to_check = []
     else:
         options_to_check = list(ctx.options.mfem_options.split(","))
+
+    if "superlu" in options_to_check:
+        ctx.options.superlu_dist = True
 
     # Add dependencies options to check
     dependencies_to_check = []

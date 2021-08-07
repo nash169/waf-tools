@@ -34,7 +34,7 @@ def check_slepc(ctx):
     # Remove automatic PETSc detection
     ctx.env.LIB_SLEPC = ctx.env.LIB_SLEPC[:-1]
     ctx.env.LIBPATH_SLEPC = ctx.env.LIBPATH_SLEPC[:-1]
-    ctx.env.INCLUDES_SLEPC = ctx.env.INCLUDES_SLEPC[:-2]
+    ctx.env.INCLUDES_SLEPC = ctx.env.INCLUDES_SLEPC[:-1]
 
     if ctx.env.HAVE_SLEPC and "SLEPC" not in ctx.get_env()["libs"]:
         # Check for PETSc

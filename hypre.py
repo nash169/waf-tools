@@ -23,7 +23,10 @@ def check_hypre(ctx):
     check_include(ctx, "HYPRE", ["hypre"], ["HYPRE.h"], path_check)
 
     # HYPRE libs
-    check_lib(ctx, "HYPRE", "", ["libHYPRE", "libHYPRE_core"], path_check)
+    if ctx.env["DEST_OS"] == "darwin":
+        check_lib(ctx, "HYPRE", "", ["libHYPRE"], path_check)
+    else:
+        check_lib(ctx, "HYPRE", "", ["libHYPRE", "libHYPRE_core"], path_check)
 
     if ctx.env.LIB_HYPRE or ctx.env.STLIB_HYPRE:
         ctx.get_env()["libs"] += ["HYPRE"]

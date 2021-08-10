@@ -7,3 +7,4 @@ Here is a list of improvements:
 - Adding PGI compiler
 - boost, corrade, magnum tools need to be completed
 - fixed blas/lapack dependencies (eigen tool not properly working at the moment)
+- Search how to generate cmake files

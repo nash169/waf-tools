@@ -33,7 +33,9 @@ def check_bullet(ctx):
 
     # bullet-lib libs
     components = ["LinearMath", "Bullet3Common", "BulletInverseDynamics",
-                  "BulletCollision", "BulletDynamics", "BulletSoftBody"]
+                  "BulletCollision", "BulletDynamics", "BulletSoftBody",
+                  "OpenGLWindow", "BulletXmlWorldImporter", "BulletWorldImporter",
+                  "BulletRobotics", "BulletFileLoader", "BulletExampleBrowserLib"]
 
     # Components to check
     if ctx.options.bullet_components is None:

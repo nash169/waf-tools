@@ -20,7 +20,7 @@ def check_pinocchio(ctx):
         path_check = [ctx.options.pinocchio_path]
 
     # PINOCCHIO includes
-    check_include(ctx, "PINOCCHIO", ["pinocchio"], ["config.hpp"], path_check)
+    check_include(ctx, "PINOCCHIO", [""], ["pinocchio/config.hpp"], path_check)
 
     # PINOCCHIO libs
     check_lib(ctx, "PINOCCHIO", "", ["libpinocchio"], path_check)

@@ -11,6 +11,11 @@ def options(opt):
         "--urdfdom-path", type="string", help="path to urdfdom", dest="urdfdom_path"
     )
 
+    # Headers
+    opt.add_option(
+        "--urdfdom-headers", action="store_true", help="search for urdfdom headers", dest="urdfdom_headers"
+    )
+
 
 @conf
 def check_urdfdom(ctx):
@@ -21,24 +26,28 @@ def check_urdfdom(ctx):
         path_check = [ctx.options.urdfdom_path]
 
     # URDFDOM includes
-    check_include(ctx, "URDFDOM", [""],
-                  [
-                  "urdf_model/model.h",
-                  "urdf_sensor/sensor.h",
-                  "urdf_model_state/model_state.h",
-                  "urdf_world/world.h",
-                  "urdf_exception/exception.h",
-                  "urdf_parser/urdf_parser.h"
-                  ],
-                  path_check)
+    check_include(ctx, "URDFDOM", [""], [
+                  "urdf_parser/urdf_parser.h"], path_check)
+
+    # URDFDOM additional headers
+    if ctx.options.urdfdom_headers:
+        check_include(ctx, "URDFDOM", [""],
+                      [
+            "urdf_exception/exception.h",
+            "urdf_model/model.h",
+            "urdf_model_state/model_state.h",
+            "urdf_sensor/sensor.h",
+            "urdf_world/world.h",
+        ],
+            path_check)
 
     # URDFDOM lib
     check_lib(ctx, "URDFDOM", [""],
               [
         "liburdfdom_model",
-        "liburdfdom_world",
+        "liburdfdom_model_state",
         "liburdfdom_sensor",
-        "liburdfdom_model_state"
+        "liburdfdom_world",
     ],
         path_check)
 

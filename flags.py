@@ -14,7 +14,7 @@ def options(opt):
     )
 
     opt.add_option(
-        "--standard", type="string", help="C++ Standard", dest="cpp_standard"
+        "--std", type="string", help="C++ Standard", dest="cpp_standard"
     )
 
 

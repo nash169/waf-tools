@@ -20,7 +20,7 @@ def check_ipopt(ctx):
         path_check = [ctx.options.ipopt_path]
 
     # Header check
-    check_include(ctx, "IPOPT", ["coin-or"], ["IpNLP.hpp"], path_check)
+    check_include(ctx, "IPOPT", ["coin-or", "coin"], ["IpNLP.hpp"], path_check)
 
     # Library Check
     check_lib(ctx, "IPOPT", "", ["libipopt"], path_check)

@@ -1,6 +1,11 @@
 # WAF Tools
 Repository containing all my WAF tools.
 
+## Available Tools
+- Arpack (https://www.caam.rice.edu/software/ARPACK/)
+- Assimp (https://github.com/assimp/assimp)
+- ...
+
 ## TODO
 Here is a list of improvements:
 - Adding CUDA support for eigen

@@ -6,10 +6,10 @@ Repository containing all my WAF tools.
 - Assimp (https://github.com/assimp/assimp)
 - ...
 
-## TODO
+## ToDo
 Here is a list of improvements:
 - Adding CUDA support for eigen
 - Adding PGI compiler
 - boost, corrade, magnum tools need to be completed
-- fixed blas/lapack dependencies (eigen tool not properly working at the moment)
+- Fix blas/lapack dependencies (eigen tool not properly working at the moment)
 - Generate cmake files

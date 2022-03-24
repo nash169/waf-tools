@@ -31,9 +31,9 @@ def options(opt):
         "--debug", action="store_true", help="activate debug flags", dest="debug_flags",
     )
 
-    opt.add_option(
-        "--release", action="store_true", help="activate release flags", dest="release_flags",
-    )
+    # opt.add_option(
+    #     "--release", action="store_true", help="activate release flags", dest="release_flags",
+    # )
 
     opt.add_option(
         "--std", type="string", help="C++ Standard", dest="cpp_standard"
@@ -48,7 +48,10 @@ def check_flags(ctx):
         # Set C++14 Standard as default
         flags = ["-std=c++17"]
 
-    if ctx.options.release_flags:
+    if ctx.options.debug_flags:
+        flags += ["-Wall", "-w"]
+        defines = ["DEBUG"]
+    else:
         flags += ["-O3",
                   "-xHost" if ctx.env.CXX_NAME in ["icc", "icpc"] else "",
                   "-march=native" if ctx.env.CXX_NAME in [
@@ -60,14 +63,14 @@ def check_flags(ctx):
                       "gcc", "g++", "clang", "clang++"] else "",
                   "-unroll" if ctx.env.CXX_NAME in ["icc", "icpc"] else "",
                   ]
-    else:
-        flags += ["-Wall", "-w"]
+        defines = ["RELEASE"]
 
     # Remove empty strings
     flags = [string for string in flags if string != ""]
 
     # Set compiler flags environment variable
     ctx.env["CXXFLAGS"] += flags
+    ctx.env["DEFINES"] += defines
 
 
 def configure(cfg):

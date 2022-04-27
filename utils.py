@@ -209,5 +209,33 @@ def check_lib(ctx, use_name, folders, lib_names, paths, plugin=False, required=[
         ctx.end_msg(err, "YELLOW")
 
 
-def check_config(ctx, use_name, folder, config_names, paths, required=[]):
-    pass
+def check_config(ctx, folders, config_name, paths):
+    # Generate include paths
+    config_paths = []
+    for path in paths:
+        if folders:
+            for folder in folders:
+                config_paths.append(os.path.join(path, folder))
+                config_paths.append(os.path.join(path, folder, "share/waf"))
+        config_paths.append(path)
+        config_paths.append(os.path.join(path, "share/waf"))
+
+    # Check for configuration file
+    ctx.start_msg("Checking for '%s' configuration file" %
+                  str(config_name))
+    try:
+        # Config path
+        config_dir = get_directory(ctx, config_name, config_paths)
+
+        # Store libraries and required flags because they get overwritten
+        libs = ctx.get_env()["libs"]
+        requires = ctx.get_env()["requires"]
+        ctx.env.load(os.path.join(config_dir, config_name))
+        ctx.get_env()["libs"] += libs
+        ctx.get_env()["requires"] += requires
+
+        # End header msg (found)
+        ctx.end_msg("'%s' config found in %s" %
+                    (config_name, config_dir))
+    except ctx.errors.ConfigurationError:
+        ctx.end_msg("'%s' config not found" % (config_name), "YELLOW")

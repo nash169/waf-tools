@@ -23,6 +23,8 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 
+from email.policy import default
+from tkinter.tix import Tree
 from waflib.Configure import conf
 from utils import check_include, check_lib
 
@@ -37,24 +39,19 @@ def options(opt):
         "--atlas-path", type="string", help="path to ATLAS", dest="atlas_path"
     )
 
-    # Not active yet
+    # Activate BLAS
     opt.add_option(
-        "--atlas-blas", action="store_true", help="Activates only BLAS subset", dest="atlas_blas"
+        "--atlas-blas", action="store", help="Activates only BLAS subset", dest="atlas_blas", default=True
     )
 
-    # Not active yet
+    # Activate LAPACK
     opt.add_option(
-        "--atlas-lapack", action="store_true", help="Activates only LAPACK subset", dest="atlas_blas"
+        "--atlas-lapack", action="store", help="Activates only LAPACK subset", dest="atlas_lapack", default=False
     )
 
-    # Not active yet
+    # Activate C LAPACK
     opt.add_option(
-        "--atlas-cblas", action="store_true", help="Activates only C BLAS subset", dest="atlas_blas"
-    )
-
-    # Not active yet
-    opt.add_option(
-        "--atlas-f77blas", action="store_true", help="Activates only fortran BLAS subset", dest="atlas_blas"
+        "--atlas-lapacke", action="store", help="Activates only C LAPACK subset", dest="atlas_lapacke", default=False
     )
 
 
@@ -66,19 +63,31 @@ def check_atlas(ctx):
     else:
         path_check = [ctx.options.atlas_path]
 
-    # HEADER Check
-    check_include(ctx, "ATLAS", ["atlas"], [
-                  "atlas_buildinfo.h", "clapack.h"], path_check)
+    # # HEADER Check
+    # check_include(ctx, "ATLAS", ["atlas"], [
+    #               "atlas_buildinfo.h", "clapack.h"], path_check)
 
     # LIB Check
-    check_lib(ctx, "ATLAS", "", ["libatlas"], path_check)
+    lib_check = []
+    if ctx.options.atlas_blas:
+        lib_check += ["libblas"]  # libatlas
+
+    if ctx.options.atlas_lapack:
+        lib_check += ["liblapack"]
+
+    if ctx.options.atlas_lapacke:
+        lib_check += ["liblapacke"]
+
+    check_lib(ctx, "ATLAS", "", lib_check, path_check)
 
     if ctx.env.LIB_ATLAS:
         ctx.get_env()["libs"] += ["ATLAS"]
 
-        # Remove LAPACK if present (ATLAS has its own implementation)
-        # This should take place just when the complete atlas implementation is requested
-        if "LAPACK" in ctx.get_env()["libs"]:
+        if ctx.options.atlas_blas and "BLAS" in ctx.get_env()["libs"]:
+            ctx.get_env()["libs"].remove("BLAS")
+            ctx.get_env()["requires"].remove("BLAS")
+
+        if ctx.options.atlas_lapack and "LAPACK" in ctx.get_env()["libs"]:
             ctx.get_env()["libs"].remove("LAPACK")
             ctx.get_env()["requires"].remove("LAPACK")
 

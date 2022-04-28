@@ -23,6 +23,7 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 
+from email.policy import default
 from waflib.Configure import conf
 from utils import check_lib
 
@@ -36,17 +37,20 @@ def options(opt):
     opt.add_option(
         "--lapack-path", type="string", help="path to LAPACK", dest="lapack_path"
     )
-    # C lib LAPACK version
-    opt.add_option(
-        "--lapack-clib", action="store_true", help="load C lib version LAPACK", dest="lapack_clib"
-    )
+
     # 64-bit indexing
     opt.add_option(
         "--lapack-64", action="store_true", help="enable 64-bit indexing", dest="lapack_64"
     )
-    # no search (assuming system blas is present)
+
+    # C++ LAPACK
     opt.add_option(
-        "--lapack-system", action="store_true", default=False, help="using system lapack", dest="lapack_system"
+        "--lapack-fortran", action="store", help="load C lib version LAPACK", dest="lapack_fortran", default=True
+    )
+
+    # C LAPACK
+    opt.add_option(
+        "--lapack-c", action="store", help="load C lib version LAPACK", dest="lapack_c", default=False
     )
 
 
@@ -58,27 +62,21 @@ def check_lapack(ctx):
     else:
         path_check = [ctx.options.lapack_path]
 
-    if ctx.options.lapack_system:
-        if ctx.options.lapack_64:
-            ctx.env.LIB_LAPACK = ["lapack64"]
-            if ctx.options.lapack_clib:
-                ctx.env.LIB_LAPACK += ["lapacke64"]
-        else:
-            ctx.env.LIB_LAPACK = ["lapack"]
-            if ctx.options.lapack_clib:
-                ctx.env.LIB_LAPACK += ["lapacke"]
+    if ctx.env["DEST_OS"] == "darwin" and ctx.options.lapack_path is None:
+        if ctx.options.lapack_fortran:
+            ctx.env.LIB_LAPACK = [
+                "lapack64" if ctx.options.lapack_64 else "lapack"]
+        if ctx.options.lapack_c:
+            ctx.env.LIB_LAPACK += ["lapacke64" if ctx.options.lapack_64 else "lapacke"]
     else:
-        if ctx.options.lapack_64:
-            lib_to_check = ["liblapack64"]
-            if ctx.options.lapack_clib:
-                lib_to_check += ["liblapacke64"]
-        else:
-            lib_to_check = ["liblapack"]
-            if ctx.options.lapack_clib:
-                lib_to_check += ["liblapacke"]
-
+        lib_check = []
+        if ctx.options.lapack_fortran:
+            lib_check += [
+                "liblapack64" if ctx.options.lapack_64 else "liblapack"]
+        if ctx.options.lapack_c:
+            lib_check += ["liblapacke64" if ctx.options.lapack_64 else "liblapacke"]
         # Check LAPACK libs
-        check_lib(ctx, "LAPACK", "", lib_to_check, path_check)
+        check_lib(ctx, "LAPACK", "", lib_check, path_check)
 
     # Add LAPACK
     if ctx.env.LIB_LAPACK:

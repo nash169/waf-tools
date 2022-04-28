@@ -23,6 +23,8 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 
+from email.policy import default
+from turtle import Turtle
 from waflib.Configure import conf
 from utils import check_lib
 
@@ -34,9 +36,25 @@ def options(opt):
     opt.add_option(
         "--openblas-path", type="string", help="path to OpenBLAS", dest="openblas_path"
     )
+
     # 64-bit indexing
     opt.add_option(
         "--openblas-64", action="store_true", help="enable 64-bit indexing", dest="openblas_64"
+    )
+
+    # blas
+    opt.add_option(
+        "--openblas-blas", action="store", help="enable openblas blas", dest="openblas_noblas", default=True
+    )
+
+    # lapack
+    opt.add_option(
+        "--openblas-lapack", action="store", help="enable openblas lapack", dest="openblas_lapack", default=False
+    )
+
+    # C lapack
+    opt.add_option(
+        "--openblas-lapacke", action="store", help="enable openblas C lapack", dest="openblas_lapacke", default=False
     )
 
 
@@ -48,20 +66,28 @@ def check_openblas(ctx):
     else:
         path_check = [ctx.options.openblas_path]
 
-    # LIB Check
-    if ctx.options.openblas_64:
-        check_lib(ctx, "OPENBLAS", "", ["libopenblas64"], path_check)
-    else:
-        check_lib(ctx, "OPENBLAS", "", ["libopenblas"], path_check)
+    # BLAS
+    lib_check = []
+    if ctx.options.openblas_blas:
+        lib_check += ["libopenblas64" if ctx.options.openblas_64 else "libopenblas"]
+    # LAPACK
+    if ctx.options.openblas_lapack:
+        lib_check += ["liblapack64" if ctx.options.openblas_64 else "liblapack"]
+    # C LAPACK
+    if ctx.options.openblas_lapacke:
+        lib_check += ["liblapacke64" if ctx.options.openblas_64 else "liblapacke"]
+
+    check_lib(ctx, "OPENBLAS", "", lib_check, path_check)
 
     if ctx.env.LIB_OPENBLAS:
         ctx.get_env()["libs"] += ["OPENBLAS"]
 
-        # Remove LAPACK if present (OpenBLAS has its own implementation)
-        # This should take place just when the complete atlas implementation is requested
-        if "LAPACK" in ctx.get_env()["libs"]:
+        if ctx.options.openblas_blas and "BLAS" in ctx.get_env()["libs"]:
+            ctx.get_env()["libs"].remove("BLAS")
+
+        # Remove system LAPACK if use the OpenBLAS LAPACK
+        if ctx.options.openblas_lapack and "LAPACK" in ctx.get_env()["libs"]:
             ctx.get_env()["libs"].remove("LAPACK")
-            ctx.get_env()["requires"].remove("LAPACK")
 
 
 def configure(cfg):

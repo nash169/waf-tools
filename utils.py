@@ -60,9 +60,8 @@ def check_include(ctx, use_name, folders, include_names, paths, required=[]):
             ctx.start_msg("Checking for '%s' header" % str(include_name))
             try:
                 # Add path
-                ctx.get_env()["INCLUDES_" + use_name] = ctx.get_env()[
-                    "INCLUDES_" + use_name
-                ] + [get_directory(ctx, include_name, include_paths)]
+                ctx.get_env()[
+                    "INCLUDES_" + use_name] += [get_directory(ctx, include_name, include_paths)]
                 # End header msg (found)
                 ctx.end_msg(
                     "'%s' header found in %s"
@@ -137,14 +136,12 @@ def check_lib(ctx, use_name, folders, lib_names, paths, plugin=False, required=[
             try:
                 try:
                     # Add shared path
-                    ctx.get_env()["LIBPATH_" + use_name] = ctx.get_env()[
-                        "LIBPATH_" + use_name
-                    ] + [get_directory(ctx, lib_name + "." + suffix, lib_paths)]
+                    ctx.get_env()[
+                        "LIBPATH_" + use_name] += [get_directory(ctx, lib_name + "." + suffix, lib_paths)]
                     # Add shared lib
                     if not plugin:
-                        ctx.get_env()["LIB_" + use_name] = ctx.get_env()[
-                            "LIB_" + use_name
-                        ] + [lib_name[3:] if lib_name[:3] == "lib" else lib_name]
+                        ctx.get_env()["LIB_" + use_name] += [lib_name[3:]
+                                                             if lib_name[:3] == "lib" else lib_name]
                     # End shared lib msg (found)
                     ctx.end_msg(
                         "'%s' component/plugin found in %s (shared)"
@@ -155,13 +152,11 @@ def check_lib(ctx, use_name, folders, lib_names, paths, plugin=False, required=[
                     )
                 except:
                     # Add static path
-                    ctx.get_env()["STLIBPATH_" + use_name] = ctx.get_env()[
-                        "STLIBPATH_" + use_name
-                    ] + [get_directory(ctx, lib_name + ".a", lib_paths)]
+                    ctx.get_env()[
+                        "STLIBPATH_" + use_name] += [get_directory(ctx, lib_name + ".a", lib_paths)]
                     # Add static lib
-                    ctx.get_env()["STLIB_" + use_name] = ctx.get_env()[
-                        "STLIB_" + use_name
-                    ] + [lib_name[3:] if lib_name[:3] == "lib" else lib_name]
+                    ctx.get_env()["STLIB_" + use_name] += [lib_name[3:]
+                                                           if lib_name[:3] == "lib" else lib_name]
                     # End static lib msg (found)
                     ctx.end_msg(
                         "'%s' component/plugin found in %s (static)"

@@ -23,6 +23,7 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 
+from email.policy import default
 from waflib.Configure import conf
 from utils import check_include, check_lib
 
@@ -33,10 +34,13 @@ def options(opt):
         "--mkl-path", type="string", help="path to Intel Math Kernel Library", dest="mkl_path",
     )
     opt.add_option(
-        "--mkl-threading", type="string", help="mkl threading layer", dest="mkl_threading",
+        # sequential - openmp - tbb
+        "--mkl-parallel", type="string", help="mkl threading layer", dest="mkl_parallel", default="sequential"
     )
     opt.add_option(
-        "--mkl-openmp", type="string", help="openmp type", dest="mkl_openmp")
+        # intel - std
+        "--mkl-openmp", type="string", help="openmp type", dest="mkl_openmp", default="intel"
+    )
 
     opt.add_option(
         "--mkl-64", action="store_true", help="API with 64 bit integer", dest="mkl_64"
@@ -58,7 +62,7 @@ def check_mkl(ctx):
     check_include(ctx, "MKL", ["mkl"], ["mkl.h"], path_check)
 
     # Sequential
-    if ctx.options.mkl_threading is None or ctx.options.mkl_threading == "sequential":
+    if ctx.options.mkl_parallel == "sequential":
         if ctx.env.CXXNAME in ["icc", "icpc"]:
             # Check lib
             check_lib(ctx, "MKL", "",
@@ -87,7 +91,7 @@ def check_mkl(ctx):
             if ctx.env["DEST_OS"] != "darwin":
                 ctx.env.LINKFLAGS_MKL = ["-Wl,--no-as-needed"]
     # OpenMP
-    elif ctx.options.mkl_threading == "openmp":
+    elif ctx.options.mkl_parallel == "openmp":
         if ctx.env.CXXNAME in ["icc", "icpc"]:
             check_lib(ctx, "MKL", "",
                       [
@@ -118,7 +122,7 @@ def check_mkl(ctx):
             # Add link flags
             if ctx.env["DEST_OS"] != "darwin":
                 ctx.env.LINKFLAGS_MKL = ["-Wl,--no-as-needed"]
-    elif ctx.options.mkl_threading == "tbb":
+    elif ctx.options.mkl_parallel == "tbb":
         # Load TBB
         if "TBB" not in ctx.get_env()["libs"]:
             ctx.get_env()["requires"] += ["TBB"]

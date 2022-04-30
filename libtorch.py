@@ -34,6 +34,21 @@ def options(opt):
         "--libtorch-path", type="string", help="path to libtorch", dest="libtorch_path"
     )
 
+    opt.add_option(
+        "--libtorch-cuda", action="store_true", help="activate CUDA support", dest="libtorch_cuda"
+    )
+
+    opt.add_option(
+        "--libtorch-c11", action="store", help="support to C++11 interface", dest="libtorch_c11", default='True'
+    )
+
+    opt.add_option(
+        "--libtorch-components", type="string", help="manually select libraries", dest="libtorch_components"
+    )
+
+    # Load options
+    opt.load("cuda", tooldir="waf_tools")
+
 
 @conf
 def check_libtorch(ctx):
@@ -43,19 +58,69 @@ def check_libtorch(ctx):
     else:
         path_check = [ctx.options.libtorch_path]
 
-    # kernel-lib includes
+    # Libtorch includes
     check_include(ctx, "LIBTORCH", ["include/torch/csrc/api/include"], ["torch/script.h",
                                                                         "torch/torch.h"], path_check)
 
-    # LIB Check
+    # Define os-based components
     if ctx.env["DEST_OS"] == "darwin":
-        libraries = ['libnnpack', 'libonnx_proto', 'libtorch_python', 'libqnnpack', 'libbackend_with_compiler', 'libtorch', 'libfbjni', 'libbreakpad', 'libcpuinfo', 'libXNNPACK', 'libbenchmark', 'libdnnl', 'libtorch_global_deps', 'libiomp5', 'libfmt', 'libpthreadpool', 'libprotobuf', 'libprotoc', 'libprotobuf-lite', 'libcaffe2_protos', 'libtorch_cpu', 'libonnx', 'libtensorpipe',
-                     'libgtest_main', 'libjitbackend_test', 'libc10', 'libtorchbind_test', 'libgtest', 'libbenchmark_main', 'libshm', 'libfoxi_loader', 'libfbgemm', 'libgmock', 'libtensorpipe_uv', 'libkineto', 'libclog', 'libcpuinfo_internals', 'libbreakpad_common', 'libpytorch_jni', 'libgloo', 'libpytorch_qnnpack', 'libnnpack_reference_layers', 'libasmjit', 'libgmock_main']
+        libs = ['libnnpack', 'libonnx_proto', 'libtorch_python', 'libqnnpack', 'libbackend_with_compiler', 'libtorch', 'libfbjni', 'libbreakpad', 'libcpuinfo',
+                'libXNNPACK', 'libbenchmark', 'libdnnl', 'libtorch_global_deps', 'libiomp5', 'libfmt', 'libpthreadpool', 'libprotobuf', 'libprotoc', 'libprotobuf-lite',
+                'libcaffe2_protos', 'libtorch_cpu', 'libonnx', 'libtensorpipe', 'libgtest_main', 'libjitbackend_test', 'libc10', 'libtorchbind_test', 'libgtest',
+                'libbenchmark_main', 'libshm', 'libfoxi_loader', 'libfbgemm', 'libgmock', 'libtensorpipe_uv', 'libkineto', 'libclog', 'libcpuinfo_internals',
+                'libbreakpad_common', 'libpytorch_jni', 'libgloo', 'libpytorch_qnnpack', 'libnnpack_reference_layers', 'libasmjit', 'libgmock_main']
     else:
-        libraries = ['libtorch_cpu', 'libnnapi_backend', 'libnnpack', 'libgloo', 'libcaffe2_nvrtc', 'libpthreadpool', 'libc10_cuda', 'libqnnpack', 'libtensorpipe', 'libprotoc', 'libfmt', 'libtorch_cuda', 'libnnpack_reference_layers', 'libgmock', 'libgtest_main', 'libXNNPACK', 'libbreakpad', 'libonnx_proto', 'libtorch_python', 'libfoxi_loader', 'libtorch', 'libtorchbind_test', 'libbenchmark_main', 'libshm', 'libjitbackend_test',
-                     'libc10d_cuda_test', 'libclog', 'libtensorpipe_cuda', 'libgmock_main', 'libasmjit', 'libgtest', 'libnvrtc-builtins', 'libdnnl', 'libcaffe2_protos', 'libprotobuf', 'libprotobuf-lite', 'libgloo_cuda', 'libonnx', 'libc10', 'libtensorpipe_uv', 'libpytorch_qnnpack', 'libcpuinfo', 'libfbgemm', 'libtorch_global_deps', 'libbenchmark', 'libcpuinfo_internals', 'libbackend_with_compiler', 'libkineto', 'libbreakpad_common']
+        libs = ['libpthreadpool', 'libbenchmark_main', 'libbackend_with_compiler', 'libkineto', 'libtorch_cuda_cu', 'libtorchbind_test', 'libtorch', 'libfmt', 'libprotoc',
+                'libtorch_cuda', 'libcaffe2_nvrtc', 'libgloo_cuda', 'libgtest_main', 'libasmjit', 'libnnpack', 'libnnapi_backend', 'libcaffe2_protos', 'libclog',
+                'libnnpack_reference_layers', 'libonnx', 'libcpuinfo', 'libfbgemm', 'libprotobuf', 'libprotobuf-lite', 'libtorch_cpu', 'libshm', 'libjitbackend_test',
+                'libXNNPACK', 'libc10_cuda', 'libgtest', 'libbenchmark', 'libpytorch_qnnpack', 'libgmock', 'libgmock_main', 'libdnnl', 'libbreakpad', 'libqnnpack',
+                'libgloo', 'libtensorpipe', 'libc10d_cuda_test', 'libc10', 'libtensorpipe_uv', 'libonnx_proto', 'libtorch_python', 'libfoxi_loader', 'libtorch_cuda_cpp',
+                'libcpuinfo_internals', 'libbreakpad_common', 'libtensorpipe_cuda', 'libtorch_global_deps']
 
-    check_lib(ctx, "LIBTORCH", "", libraries, path_check)
+    # Select components
+    if ctx.options.libtorch_components is None:
+        # Defaults libraries (used by libtorch)
+        lib_check = ["libtorch",  "libtorch_cpu", "libc10"]  # libkineto
+    else:
+        lib_check = []
+        for lib in list(ctx.options.libtorch_components.split(",")):
+            if lib in libs:
+                lib_check += [lib]
+            else:
+                ctx.msg(lib + " not found", "YELLOW")
+
+    # Add cuda if requested
+    if ctx.options.libtorch_cuda and ctx.env["DEST_OS"] != "darwin":
+        ctx.get_env()["requires"] += ["CUDA"]
+        # Load CUDA necessary components
+        ctx.options.cuda_components = (
+            "libcuda,libnvrtc,libnvToolsExt,libcudart,libcufft,libcurand,libcublas,libcudnn"
+        )
+        ctx.load("cuda", tooldir="waf_tools")
+        # Add CUDA related components
+        lib_check += ["libtorch_cuda", "libtorch_cuda_cpp",
+                      "libc10_cuda", "libtorch_cuda_cu"]
+        # Add flags to force linking against CUDA
+        ctx.env.LINKFLAGS_LIBTORCH += ["-Wl,--no-as-needed"]
+
+    # LIB Check
+    check_lib(ctx, "LIBTORCH", "", lib_check, path_check)
+
+    # Libtorch defines
+    ctx.env.DEFINES_LIBTORCH += ["USE_DISTRIBUTED", "USE_C10D_NCCL",
+                                 "USE_C10D_GLOO", "USE_RPC", "USE_TENSORPIPE"]
+
+    # CXX flags
+    ctx.env.CXXFLAGS_LIBTORCH += [
+        "-D_GLIBCXX_USE_CXX11_ABI=1" if ctx.options.libtorch_c11.lower() in ['true', 't', '1', 'y', 'yes'] else "-D_GLIBCXX_USE_CXX11_ABI=0"]
+
+    # LD flags
+    ctx.env.LDFLAGS_LIBTORCH += [
+        "-D_GLIBCXX_USE_CXX11_ABI=1" if ctx.options.libtorch_c11.lower() in ['true', 't', '1', 'y', 'yes'] else "-D_GLIBCXX_USE_CXX11_ABI=0"]
+
+    # If not in standard path hard compile dynamic linking
+    if ctx.options.libtorch_path is not None:
+        ctx.env.RPATH_LIBTORCH += [ctx.env.LIBPATH_LIBTORCH[-1]]
 
     if ctx.env.LIB_LIBTORCH:
         ctx.get_env()["libs"] += ["LIBTORCH"]

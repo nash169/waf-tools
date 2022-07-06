@@ -47,12 +47,12 @@ def check_pinocchio(ctx):
     # PINOCCHIO libs
     check_lib(ctx, "PINOCCHIO", "", ["libpinocchio"], path_check)
 
-    # If not in standard path hard compile dynamic linking (this should probably go directly in utils)
-    if ctx.options.pinocchio_path is not None:
-        ctx.env.RPATH_PINOCCHIO += [ctx.env.LIBPATH_PINOCCHIO[-1]]
-
     if ctx.env.LIB_PINOCCHIO:
-        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["PINOCCHIO"]
+        # If not in standard path hard compile dynamic linking (this should probably go directly in utils)
+        if ctx.options.pinocchio_path is not None:
+            ctx.env.RPATH_PINOCCHIO += [ctx.env.LIBPATH_PINOCCHIO[-1]]
+
+        ctx.get_env()["libs"] += ["PINOCCHIO"]
 
 
 def configure(cfg):

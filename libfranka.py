@@ -47,7 +47,7 @@ def check_libfranka(ctx):
 
     # libfranka-lib includes
     check_include(
-        ctx, "LIBFRANKA", ["franka"], ["vacuum_gripper_state.h"], path_check
+        ctx, "LIBFRANKA", [], ["franka/robot.h"], path_check
     )
 
     # libfranka-lib libs
@@ -55,13 +55,17 @@ def check_libfranka(ctx):
 
     if ctx.env.LIB_LIBFRANKA:
         # Add dependencies to require libraries
-        ctx.get_env()["requires"] = ctx.get_env()["requires"] + ["EIGEN"]
+        ctx.get_env()["requires"] += ["EIGEN"]
 
         # Check for dependencies
         ctx.load("eigen", tooldir="waf_tools")
 
+        # If not in standard path hard compile dynamic linking (this should probably go directly in utils)
+        if ctx.options.libfranka_path is not None:
+            ctx.env.RPATH_LIBFRANKA += [ctx.env.LIBPATH_LIBFRANKA[-1]]
+
         # Add library
-        ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["LIBFRANKA"]
+        ctx.get_env()["libs"] += ["LIBFRANKA"]
 
 
 def configure(cfg):

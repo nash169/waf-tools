@@ -23,6 +23,7 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 
+import os.path as osp
 from waflib.Configure import conf
 from wafbuild.utils import check_include, check_lib, dir
 
@@ -41,7 +42,7 @@ def options(opt):
 
     # Load options
     opt.load("mpi hypre metis openmp arpack petsc slepc eigen spectra lapack blas suitesparse superlu",
-             tooldir=osp.join(dir, 'compilers'))
+             tooldir=osp.join(dir, 'libraries'))
 
 
 @conf

@@ -25,8 +25,6 @@
 
 from waflib.Configure import conf
 from wafbuild.utils import check_include, check_lib
-import os
-import os.path as osp
 
 
 def options(opt):

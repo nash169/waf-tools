@@ -23,13 +23,15 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 
+import os.path as osp
 from waflib.Configure import conf
 from wafbuild.utils import check_include, check_lib, dir
 
 
 def options(opt):
     # Required package options
-    opt.load("eigen corrade", tooldir=osp.join(dir, 'compilers'))
+    opt.load("eigen corrade nlopt libcmaes",
+             tooldir=osp.join(dir, 'libraries'))
 
     # Options
     opt.add_option(
@@ -43,9 +45,6 @@ def options(opt):
     opt.add_option(
         "--limbo-cmaes", action="store_true", help="CMAES Optimization support for Limbo", dest="limbo_cmaes"
     )
-
-    # Load options
-    opt.load("eigen nlopt libcmaes", tooldir=osp.join(dir, 'compilers'))
 
 
 @conf

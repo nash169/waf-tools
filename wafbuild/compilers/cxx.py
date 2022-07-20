@@ -46,6 +46,9 @@ def check_flags(ctx):
 
     # Load compiler configuration and generate clangd flags
     ctx.load("compiler_cxx clang_compilation_database")
+    # 'clang_compilation_database' required for clangd support (waf exe)
+    # Waf project has to compiled with the desired tools
+    # python3 ./waf-light configure build --tools=clang_compilation_database
 
     if ctx.options.cpp_standard is not None:
         flags = ["-std=c++"+ctx.options.cpp_standard]

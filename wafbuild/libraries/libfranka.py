@@ -23,6 +23,7 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 
+import os.path as osp
 from waflib.Configure import conf
 from wafbuild.utils import check_include, check_lib, dir
 

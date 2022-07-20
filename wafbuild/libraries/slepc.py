@@ -29,6 +29,7 @@
 #             --with-PACKAGENAME-dir=PATH
 
 import os
+import os.path as osp
 from waflib.Configure import conf
 from wafbuild.utils import dir
 
@@ -38,7 +39,7 @@ def options(opt):
         "--slepc-path", type="string", help="path to OpenBLAS", dest="slepc_path"
     )
 
-    opt.load("petsc", tooldir=osp.join(dir, 'compilers'))
+    opt.load("petsc", tooldir=osp.join(dir, 'libraries'))
 
 
 @conf
@@ -62,7 +63,7 @@ def check_slepc(ctx):
     if ctx.env.HAVE_SLEPC and "SLEPC" not in ctx.get_env()["libs"]:
         # Check for PETSc
         if "PETSC" not in ctx.get_env()["libs"]:
-            ctx.load("petsc", tooldir=osp.join(dir, 'compilers'))
+            ctx.load("petsc", tooldir=osp.join(dir, 'libraries'))
 
         ctx.get_env()["libs"] += ["SLEPC"]
 

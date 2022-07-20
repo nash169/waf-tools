@@ -23,8 +23,9 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 
+import os.path as osp
 from waflib.Configure import conf
-from utils import check_include, check_lib
+from wafbuild.utils import check_include, check_lib, dir
 
 
 def options(opt):
@@ -34,7 +35,7 @@ def options(opt):
     )
 
     # Required package options
-    opt.load("eigen corrade", tooldir="waf_tools")
+    opt.load("eigen corrade", tooldir=osp.join(dir, 'libraries'))
 
 
 @conf

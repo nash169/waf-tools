@@ -34,7 +34,7 @@
 # To control the number of OpenMP threads each MPI process utilizes you can set the environmental variable OMP_NUM_THREADS n
 # or the PETSc command line option -omp_num_threads n.
 
-import os
+import os.path as osp
 from waflib.Configure import conf
 from wafbuild.utils import dir
 
@@ -45,7 +45,7 @@ def options(opt):
     )
 
     # Load options
-    opt.load("mpi", tooldir=osp.join(dir, 'compilers'))
+    opt.load("mpi", tooldir=osp.join(dir, 'libraries'))
 
 
 @conf
@@ -54,7 +54,7 @@ def check_petsc(ctx):
     if ctx.options.petsc_path is None:
         path_check = ""
     else:
-        path_check = os.path.join(ctx.options.petsc_path, "lib/pkgconfig")
+        path_check = osp.join(ctx.options.petsc_path, "lib/pkgconfig")
 
     ctx.check_cfg(package='PETSc', pkg_config_path=path_check,
                   args=['--cflags', '--libs'], uselib_store='PETSC')
@@ -65,7 +65,7 @@ def check_petsc(ctx):
     if ctx.env.HAVE_PETSC and "PETSC" not in ctx.get_env()["libs"]:
         # Add MPI if PETSc has been compiled with it
         if compiler == "mpicc":
-            ctx.load("mpi", tooldir=osp.join(dir, 'compilers'))
+            ctx.load("mpi", tooldir=osp.join(dir, 'libraries'))
 
         ctx.get_env()["libs"] += ["PETSC"]
 

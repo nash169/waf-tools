@@ -24,6 +24,7 @@
 #    SOFTWARE.
 
 import re
+import os.path as osp
 
 from waflib.Configure import conf
 from wafbuild.utils import check_include, check_lib, dir
@@ -32,7 +33,7 @@ from wafbuild.utils import check_include, check_lib, dir
 def options(opt):
     # Required package options
     opt.load("corrade eigen opengl egl sdl2",
-             tooldir=osp.join(dir, 'compilers'))
+             tooldir=osp.join(dir, 'libraries'))
 
     # Add options
     opt.add_option(

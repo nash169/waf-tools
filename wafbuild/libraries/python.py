@@ -23,7 +23,7 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 
-from email.policy import default
+
 from waflib.Configure import conf
 from wafbuild.utils import check_include, check_lib
 

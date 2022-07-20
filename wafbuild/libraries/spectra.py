@@ -23,6 +23,7 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 
+import os.path as osp
 from waflib.Configure import conf
 from wafbuild.utils import check_include, dir
 
@@ -34,7 +35,7 @@ def options(opt):
     )
 
     # Load options
-    opt.load("eigen", tooldir=osp.join(dir, 'compilers'))
+    opt.load("eigen", tooldir=osp.join(dir, 'libraries'))
 
 
 @conf
@@ -52,7 +53,7 @@ def check_spectra(ctx):
     # If SPECTRA headers found
     if ctx.env.INCLUDES_SPECTRA:
         if "EIGEN" not in ctx.get_env()["libs"]:
-            ctx.load("eigen", tooldir=osp.join(dir, 'compilers'))
+            ctx.load("eigen", tooldir=osp.join(dir, 'libraries'))
 
         # Add SPECTRA label to the list of libraries
         ctx.get_env()["libs"] += ["SPECTRA"]

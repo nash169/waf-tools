@@ -23,10 +23,9 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 
+import os.path as osp
 from waflib.Configure import conf
 from wafbuild.utils import check_include, check_lib, dir
-import os
-import os.path as osp
 
 
 def options(opt):
@@ -47,7 +46,7 @@ def options(opt):
     )
 
     # Load options
-    opt.load("cuda", tooldir=osp.join(dir, 'compilers'))
+    opt.load("cuda", tooldir=osp.join(dir, 'libraries'))
 
 
 @conf

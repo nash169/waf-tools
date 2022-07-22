@@ -48,7 +48,7 @@ def check_controllib(ctx):
 
     # control-lib includes
     check_include(ctx, "CONTROLLIB", [""], [
-                  "control_lib/Control.hpp"], path_check)
+                  "control_lib/controllers/AbstractController.hpp"], path_check)
 
     # control-lib libs
     check_lib(ctx, "CONTROLLIB", "", ["libControl"], path_check)

@@ -37,15 +37,16 @@ def options(opt):
 def check_pinocchio(ctx):
     # Set the search path
     if ctx.options.pinocchio_path is None:
-        path_check = ["/usr/local", "/usr"]
+        path_check = ["/usr/local", "/usr", "/opt"]
     else:
         path_check = [ctx.options.pinocchio_path]
 
     # PINOCCHIO includes
-    check_include(ctx, "PINOCCHIO", [""], ["pinocchio/config.hpp"], path_check)
+    check_include(ctx, "PINOCCHIO", ["openrobots"], [
+                  "pinocchio/config.hpp"], path_check)
 
     # PINOCCHIO libs
-    check_lib(ctx, "PINOCCHIO", "", ["libpinocchio"], path_check)
+    check_lib(ctx, "PINOCCHIO", ["openrobots"], ["libpinocchio"], path_check)
 
     if ctx.env.LIB_PINOCCHIO:
         # If not in standard path hard compile dynamic linking (this should probably go directly in utils)

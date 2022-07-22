@@ -16,7 +16,7 @@ Here is a list of improvements:
 - boost, corrade, magnum tools need to be completed
 - Generate cmake files
 
-### Install the package
+## Install the package
 In order to install the package in `.local` run
 ```sh
 pip(pip3) install .
@@ -24,4 +24,8 @@ pip(pip3) install .
 For local installation in the current directory
 ```sh
 pip(pip3) install -e .
+```
+Let sudo see binaries in the your local path. Add this alias to your `.bashrc`(`.zshrc`)
+```
+alias sudo="sudo -E env 'PATH=$PATH'"
 ```

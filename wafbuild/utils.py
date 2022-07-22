@@ -74,6 +74,7 @@ def check_include(ctx, use_name, folders, include_names, paths, required=[]):
             for folder in folders:
                 include_paths.append(os.path.join(path, folder))
                 include_paths.append(os.path.join(path, "include", folder))
+                include_paths.append(os.path.join(path, folder, "include"))
                 include_paths.append(os.path.join(
                     path, "include/x86_64-linux-gnu", folder))
         include_paths.append(path)
@@ -133,6 +134,7 @@ def check_lib(ctx, use_name, folders, lib_names, paths, plugin=False, required=[
             for folder in folders:
                 lib_paths.append(os.path.join(path, folder))
                 lib_paths.append(os.path.join(path, "lib", folder))
+                lib_paths.append(os.path.join(path, folder, "lib"))
                 lib_paths.append(os.path.join(path, "lib64", folder))
                 lib_paths.append(os.path.join(
                     path, "lib/x86_64-linux-gnu", folder))

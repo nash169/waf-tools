@@ -35,7 +35,8 @@ def options(opt):
     )
 
     # Required package options
-    opt.load("eigen corrade", tooldir=osp.join(dir, 'libraries'))
+    opt.load("eigen corrade optimizationlib",
+             tooldir=osp.join(dir, 'libraries'))
 
 
 @conf
@@ -57,11 +58,14 @@ def check_controllib(ctx):
         # Add dependencies to require libraries
         if "EIGEN" not in ctx.get_env()["libs"]:
             ctx.get_env()["requires"] += ["EIGEN"]
-            ctx.load("eigen", tooldir="waf_tools")
+            ctx.load("eigen", tooldir=osp.join(dir, 'libraries'))
 
         if "CORRADE" not in ctx.get_env()["libs"]:
             ctx.get_env()["requires"] += ["CORRADE"]
-            ctx.load("corrade", tooldir="waf_tools")
+            ctx.load("corrade", tooldir=osp.join(dir, 'libraries'))
+
+        if "OPTIMIZATIONLIB" not in ctx.get_env()["libs"]:
+            ctx.load("optimizationlib", tooldir=osp.join(dir, 'libraries'))
 
         # Add library
         ctx.get_env()["libs"] += ["CONTROLLIB"]

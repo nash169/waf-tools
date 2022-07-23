@@ -57,16 +57,16 @@ def check_optimizationlib(ctx):
         # Add dependencies to require libraries
         if "EIGEN" not in ctx.get_env()["libs"]:
             ctx.env.REQUIRED += ["EIGEN"]
-            ctx.load("eigen", tooldir="waf_tools")
+            ctx.load("eigen", tooldir=osp.join(dir, 'libraries'))
 
         if "NLOPT" not in ctx.get_env()["libs"]:
-            ctx.load("nlopt", tooldir="waf_tools")
+            ctx.load("nlopt", tooldir=osp.join(dir, 'libraries'))
 
         if "IPOPT" not in ctx.get_env()["libs"]:
-            ctx.load("ipopt", tooldir="waf_tools")
+            ctx.load("ipopt", tooldir=osp.join(dir, 'libraries'))
 
         if "QPOASES" not in ctx.get_env()["libs"]:
-            ctx.load("qpoases", tooldir="waf_tools")
+            ctx.load("qpoases", tooldir=osp.join(dir, 'libraries'))
 
         # Add library
         ctx.get_env()["libs"] += ["OPTIMIZATIONLIB"]

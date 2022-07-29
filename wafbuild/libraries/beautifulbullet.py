@@ -24,13 +24,22 @@
 #    SOFTWARE.
 
 import os.path as osp
+
+from numpy import require
 from waflib.Configure import conf
 from wafbuild.utils import check_include, check_lib, dir
+
+required = "eigen bullet urdfdom assimp pinocchio"
+optional = "graphicslib"
 
 
 def options(opt):
     # Required package options
-    opt.load("eigen bullet urdfdom assimp pinocchio",
+    opt.load(required,
+             tooldir=osp.join(dir, 'libraries'))
+
+    # Optional package options
+    opt.load(optional,
              tooldir=osp.join(dir, 'libraries'))
 
     # Options
@@ -54,21 +63,21 @@ def check_beautifulbullet(ctx):
     check_lib(ctx, "BEAUTIFULBULLET", "", ["libBeautifulBullet"], path_check)
 
     if ctx.env.LIB_BEAUTIFULBULLET or ctx.env.STLIB_BEAUTIFULBULLET:
-        # Add dependencies to required libraries
-        deps = ["EIGEN", "BULLET", "ASSIMP", "URDFDOM", "PINOCCHIO"]
-        ctx.get_env()["requires"] += deps
-
         # Bullet options
         ctx.options.bullet_components = "BulletDynamics,BulletCollision,LinearMath,Bullet3Common"
 
-        # Check for dependencies
-        ctx.load("eigen bullet urdfdom assimp pinocchio",
-                 tooldir=osp.join(dir, 'libraries'))
+        # Check for required dependencies
+        ctx.env.REQUIRED += ["EIGEN", "BULLET",
+                             "ASSIMP", "URDFDOM", "PINOCCHIO"]
+        ctx.load(required, tooldir=osp.join(dir, 'libraries'))
 
-        # Add dependencies to used libraries
-        for dep in deps:
-            if dep not in ctx.get_env()["libs"]:
-                ctx.get_env()["libs"] += [dep]
+        # Check for optional dependencies
+        ctx.load(optional, tooldir=osp.join(dir, 'libraries'))
+
+        # # Add dependencies to used libraries
+        # for dep in deps:
+        #     if dep not in ctx.get_env()["libs"]:
+        #         ctx.get_env()["libs"] += [dep]
 
         # Add library
         ctx.get_env()["libs"] += ["BEAUTIFULBULLET"]

@@ -23,46 +23,40 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 
-import os.path as osp
 from waflib.Configure import conf
-from wafbuild.utils import check_include, check_lib, dir
+from wafbuild.utils import check_include, check_lib
 
 
 def options(opt):
     # Select installation path
     opt.add_option(
-        "--curlpp-path", type="string", help="path to curlpp", dest="curlpp_path"
+        "--curl-path", type="string", help="path to curl", dest="curl_path"
     )
-
-    # Required package options
-    opt.load("curl", tooldir=osp.join(dir, 'libraries'))
 
 
 @conf
-def check_curlpp(ctx):
+def check_curl(ctx):
     # Set the search path
-    if ctx.options.curlpp_path is None:
+    if ctx.options.curl_path is None:
         path_check = ["/usr/local", "/usr", "/opt"]
     else:
-        path_check = [ctx.options.curlpp_path]
+        path_check = [ctx.options.curl_path]
 
-    # CURLPP includes
-    check_include(ctx, "CURLPP", [""], ["curlpp/cURLpp.hpp"], path_check)
+    if ctx.env["DEST_OS"] == "darwin" and ctx.options.curl_path is None:
+        ctx.env.LIB_CURL = ["curl"]
+    else:
+        # CURL and CURL includes
+        check_include(ctx, "CURL", [""], ["curl/curl.h"], path_check)
 
-    # CURLPP lib
-    check_lib(ctx, "CURLPP", [""], ["libcurlpp"], path_check)
+        # CURL and CURL lib
+        check_lib(ctx, "CURL", [""], ["libcurl"], path_check)
 
-    # If CURLPP headers found
-    if ctx.env.INCLUDES_CURLPP:
-        # Find CURL
-        if "CURL" not in ctx.get_env()["libs"]:
-            ctx.env.REQUIRED += ["CURL"]
-            ctx.load("curl", tooldir=osp.join(dir, 'libraries'))
-
-        # Add CURLPP label to the list of libraries
-        ctx.get_env()["libs"] += ["CURLPP"]
+    # If CURL headers found
+    if ctx.env.LIB_CURL:
+        # Add CURL label to the list of libraries
+        ctx.get_env()["libs"] += ["CURL"]
 
 
 def configure(cfg):
-    if not cfg.env.INCLUDES_CURLPP:
-        cfg.check_curlpp()
+    if not cfg.env.LIB_CURL:
+        cfg.check_curl()

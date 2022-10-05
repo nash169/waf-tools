@@ -23,6 +23,7 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #    SOFTWARE.
 
+from traceback import print_tb
 from waflib.Configure import conf
 
 
@@ -35,10 +36,10 @@ def options(opt):
 @conf
 def check_mpi(ctx):
     # Set the search path
-    if ctx.options.petsc_path is None:
+    if ctx.options.mpi_path is None:
         path_check = ""
     else:
-        path_check = ctx.options.petsc_path
+        path_check = ctx.options.mpi_path
 
     try:
         # Check for OpenMPI

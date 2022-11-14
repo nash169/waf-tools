@@ -30,7 +30,7 @@ from wafbuild.utils import check_include, check_lib, dir
 
 def options(opt):
     # Required package options
-    opt.load("eigen", tooldir=osp.join(dir, 'compilers'))
+    opt.load("eigen", tooldir=osp.join(dir, 'libraries'))
 
     # Options
     opt.add_option(
@@ -59,7 +59,7 @@ def check_libfranka(ctx):
         ctx.get_env()["requires"] += ["EIGEN"]
 
         # Check for dependencies
-        ctx.load("eigen", tooldir=osp.join(dir, 'compilers'))
+        ctx.load("eigen", tooldir=osp.join(dir, 'libraries'))
 
         # If not in standard path hard compile dynamic linking (this should probably go directly in utils)
         if ctx.options.libfranka_path is not None:

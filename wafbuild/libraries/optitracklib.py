@@ -51,7 +51,7 @@ def check_optitracklib(ctx):
                   "optitrack_lib/Optitrack.hpp"], path_check)
 
     # optitrack-lib libs
-    check_lib(ctx, "OPTITRACKLIB", "", ["libIOptitrack"], path_check)
+    check_lib(ctx, "OPTITRACKLIB", "", ["libOptitrack"], path_check)
 
     if ctx.env.LIB_OPTITRACKLIB or ctx.env.STLIB_OPTITRACKLIB:
         # Add dependencies to require libraries

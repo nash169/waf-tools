@@ -53,7 +53,7 @@ def check_urdfdom(ctx):
 
     # URDFDOM additional headers
     if ctx.options.urdfdom_headers:
-        check_include(ctx, "URDFDOM", [""],
+        check_include(ctx, "URDFDOM", ["urdfdom_headers"],
                       [
             "urdf_exception/exception.h",
             "urdf_model/model.h",

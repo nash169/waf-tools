@@ -66,6 +66,9 @@ def check_beautifulbullet(ctx):
         # Bullet options
         ctx.options.bullet_components = "BulletDynamics,BulletCollision,LinearMath,Bullet3Common"
 
+        # Urdfdom options
+        ctx.options.urdfdom_headers = True
+
         # Check for required dependencies
         ctx.env.REQUIRED += ["EIGEN", "BULLET",
                              "ASSIMP", "URDFDOM", "PINOCCHIO"]

@@ -30,7 +30,11 @@ from wafbuild.utils import check_include, check_lib
 def options(opt):
     # Options
     opt.add_option(
-        "--zmq-path", type="string", help="path to zmq-lib", dest="zmq_path"
+        "--zmq-path", type="string", help="path to zmq-lib", dest="zmq_path",
+    )
+
+    opt.add_option(
+        "--zmq-cpp", action="store", help="load CPP lib version ZMQ", dest="zmq_cpp", default=False
     )
 
 
@@ -44,7 +48,7 @@ def check_zmq(ctx):
 
     # zmq-lib includes
     check_include(
-        ctx, "ZMQ", [], ["zmq.h"], path_check
+        ctx, "ZMQ", [], ["zmq.hpp" if ctx.options.zmq_cpp else "zmq.h"], path_check
     )
 
     # zmq-lib libs

@@ -46,10 +46,10 @@ def check_zmqstream(ctx):
     else:
         path_check = [ctx.options.zmqstream_path]
 
-    # integrator-lib includes
+    # includes
     check_include(ctx, "ZMQSTREAM", [""], ["zmq_stream/Publisher.hpp"], path_check)
 
-    # integrator-lib libs
+    # libs
     check_lib(ctx, "ZMQSTREAM", "", ["libZMQStream"], path_check)
 
     if ctx.env.LIB_ZMQSTREAM or ctx.env.STLIB_ZMQSTREAM:
@@ -59,6 +59,7 @@ def check_zmqstream(ctx):
             ctx.load("eigen", tooldir=osp.join(dir, 'libraries'))
 
         if "ZMQ" not in ctx.get_env()["libs"]:
+            ctx.options.zmq_cpp = True
             ctx.get_env()["requires"] += ["ZMQ"]
             ctx.load("zmq", tooldir=osp.join(dir, 'libraries'))
 

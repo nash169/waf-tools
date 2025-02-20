@@ -46,7 +46,8 @@ def check_pinocchio(ctx):
                   "pinocchio/config.hpp"], path_check)
 
     # PINOCCHIO libs
-    check_lib(ctx, "PINOCCHIO", ["openrobots"], ["libpinocchio"], path_check)
+    check_lib(ctx, "PINOCCHIO", ["openrobots"], [
+        "libpinocchio_default", "libpinocchio_parsers", "libpinocchio_collision", "libpinocchio_casadi"], path_check)
 
     if ctx.env.LIB_PINOCCHIO:
         # If not in standard path hard compile dynamic linking (this should probably go directly in utils)

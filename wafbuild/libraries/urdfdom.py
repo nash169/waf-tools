@@ -48,7 +48,7 @@ def check_urdfdom(ctx):
         path_check = [ctx.options.urdfdom_path]
 
     # URDFDOM includes
-    check_include(ctx, "URDFDOM", [""], [
+    check_include(ctx, "URDFDOM", ["urdfdom"], [
                   "urdf_parser/urdf_parser.h"], path_check)
 
     # URDFDOM additional headers

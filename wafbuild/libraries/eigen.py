@@ -59,7 +59,7 @@ def options(opt):
 def check_eigen(ctx):
     # Set the search path
     if ctx.options.eigen_path is None:
-        path_check = ["/usr/local", "/usr", "/opt"]
+        path_check = ["/usr/local", "/usr", "/opt", "/opt/homebrew"]
     else:
         path_check = [ctx.options.eigen_path]
 

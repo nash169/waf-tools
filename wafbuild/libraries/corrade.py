@@ -172,6 +172,10 @@ def check_corrade(ctx):
         ]
 
     if ctx.env.LIB_CORRADE:
+        # If not in standard path hard compile dynamic linking (this should probably go directly in utils)
+        if ctx.options.corrade_path is not None:
+            ctx.env.RPATH_CORRADE += [ctx.env.LIBPATH_CORRADE[-1]]
+
         ctx.get_env()["libs"] = ctx.get_env()["libs"] + ["CORRADE"]
 
 
